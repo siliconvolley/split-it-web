@@ -30,7 +30,7 @@ function AddBill() {
 
   return (
     <>
-      <div className="m-5">
+      <div className="m-5 lg:mx-[40rem]">
         <div className="flex items-center w-full">
           <div className="absolute flex-shrink-0">
             <Link to="/">

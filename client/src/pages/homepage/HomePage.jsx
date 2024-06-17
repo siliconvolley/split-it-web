@@ -5,12 +5,12 @@ import HomeIllustration from '../../assets/home_illustration.svg';
 function HomePage() {
   return (
     <>
-      <div className="mx-5 flex flex-col justify-end h-dvh">
+      <div className="mx-5 flex flex-col justify-end align-middle h-dvh lg:mx-[40rem]">
         <div>
           <img
             src={HomeIllustration}
             alt="Home Illustration"
-            className="max-w-[35rem] h-auto mx-auto mt-"
+            className="max-w-[35rem] h-auto mx-auto"
           />
         </div>
         <div className="home-title-container">
@@ -18,7 +18,7 @@ function HomePage() {
           <div className="uppercase text-[4rem] font-extrabold tracking-wide mt-[-0.5rem]">
             Split.it
           </div>
-          <span className="text-[0.9rem] text-justify">
+          <span className="text-[0.9rem] text-justify lg:text-[1.25rem]">
             "<span className="underline font-semibold">Seamlessly</span> divide
             your bills according to individual choices or equally, guaranteeing
             everyone pays their fair share with ease."
