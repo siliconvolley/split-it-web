@@ -15,8 +15,8 @@ function HomePage() {
             />
           </div>
           <div className="home-title-container">
-            <div className="text-[1.5rem] italic">Welcome to</div>
-            <div className="uppercase text-[4rem] font-extrabold tracking-wide mt-[-0.5rem]">
+            <div className="text-[1.75rem] font-light">welcome to</div>
+            <div className="uppercase text-[5rem] font-extrabold mt-[-0.5rem]">
               Split.it
             </div>
             <span className="w-[30rem] text-[0.9rem] text-justify lg:text-[1.25rem]">

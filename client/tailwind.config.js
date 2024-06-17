@@ -3,7 +3,7 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Alex Brush'] },
+      fontFamily: { sans: ['Manrope', 'Inter', 'sans-serif'] },
     },
   },
   plugins: [],
