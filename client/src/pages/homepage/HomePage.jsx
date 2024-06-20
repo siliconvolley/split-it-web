@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import HomeIllustration from '../../assets/home_illustration.svg';
+import HomeIllustration from '../../assets/home_illustration.png';
 
 function HomePage() {
   return (
@@ -11,7 +11,7 @@ function HomePage() {
             <img
               src={HomeIllustration}
               alt="Home Illustration"
-              className="max-w-[35rem] h-auto mx-auto"
+              className="max-w-[35rem] mx-auto w-full"
             />
           </div>
           <div className="home-title-container">
@@ -26,11 +26,12 @@ function HomePage() {
             </span>
           </div>
           <div className="flex justify-center my-[6rem]">
-            <div className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-lg">
-              <Link to="/bill" className="">
-                Enter Bill
-              </Link>
-            </div>
+            <Link
+              to="/bill"
+              className="w-[15rem] text-center bg-neutral-800 transition-colors duration-150 ease-in-out hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-lg"
+            >
+              Enter Bill
+            </Link>
           </div>
         </div>
       </div>
