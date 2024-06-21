@@ -36,7 +36,7 @@ function AddBill() {
   return (
     <>
       <div className="w-full flex justify-center">
-        <div className="max-w-[35rem] relative">
+        <div className="w-full sm:max-w-xl relative">
           <nav className="flex mx-4 my-8">
             <Link to="/" className="absolute">
               <ChevronLeft color="#262626" size="32" />
@@ -47,9 +47,9 @@ function AddBill() {
           </nav>
 
           <main className="flex justify-center">
-            <div className="max-w-[35rem] w-full">
-              <div className="my-8 mx-2 display-bill flex justify-center">
-                <div className="w-[28rem] p-4 bg-neutral-50 shadow hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg flex flex-col justify-center">
+            <div className="w-full sm:max-w-xl">
+              <div className="my-8 mx-4 flex justify-center">
+                <div className="w-full sm:w-[35rem] p-4 bg-neutral-50 shadow hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg flex flex-col justify-center">
                   <input
                     type="text"
                     placeholder="Enter Bill Title"
