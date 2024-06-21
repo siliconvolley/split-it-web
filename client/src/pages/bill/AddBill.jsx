@@ -59,7 +59,14 @@ function AddBill() {
                   />
 
                   <span className="text-center">
-                    {new Date().toLocaleString()}
+                    {new Intl.DateTimeFormat('en-GB', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    }).format(new Date())}
                   </span>
 
                   <div className="flex justify-between">
