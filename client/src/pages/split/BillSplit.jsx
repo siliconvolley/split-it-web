@@ -52,10 +52,10 @@ function BillSplit() {
                   <div>
                     <p>
                       <span className="font-bold">Total:</span>
-                      <span className="text-sm"> Split to 8</span>
                     </p>
-                    <p className="font-extrabold">
-                      Rs. <span className="font-extrabold">120.48</span>
+                    <p>
+                      <span className="text-sm font-semibold">Rs.</span>{' '}
+                      <span className="font-extrabold">120.48</span>
                     </p>
                   </div>
                 </div>
