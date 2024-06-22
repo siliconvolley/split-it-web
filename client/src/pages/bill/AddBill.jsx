@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 function AddBill() {
@@ -12,6 +12,17 @@ function AddBill() {
   const itemNameInputRef = useRef(null);
   const quantityInputRef = useRef(null);
   const priceInputRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  const timestamp = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date());
 
   const addItem = () => {
     if (!itemName || !itemPrice) return;
@@ -32,6 +43,18 @@ function AddBill() {
     (acc, item) => Number(acc) + Number(item.quantity) * Number(item.price),
     0
   );
+
+  const navigateAndLogState = () => {
+    const stateToPass = {
+      title: title,
+      timestamp: timestamp,
+      items: items.map(({ name, price, quantity }) => ({ name, price, quantity })),
+      totalAmount: totalAmount.toFixed(2),
+    };
+
+    console.log(stateToPass); // Log the state
+    navigate('/bill/split', { state: stateToPass });
+  };
 
   return (
     <>
@@ -78,7 +101,7 @@ function AddBill() {
                     {items.map(item => (
                       <div
                         key={item.serialNumber}
-                        className="grid grid-flow-col grid-cols-4 gap-0 bg-inherit [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="grid grid-flow-col grid-cols-4 gap-0 bg-inherit"
                         style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
                       >
                         <div className="">{item.serialNumber}.</div>
@@ -143,12 +166,12 @@ function AddBill() {
                 </div>
               </div>
               <div className="flex justify-center my-[6rem]">
-                <Link
-                  to="/bill/split"
+                <button
+                  onClick={navigateAndLogState}
                   className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 rounded-lg"
                 >
                   Add Bill
-                </Link>
+                </button>
               </div>
             </div>
           </main>
