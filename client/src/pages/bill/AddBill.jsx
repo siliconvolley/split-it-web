@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 function AddBill() {
@@ -14,6 +14,23 @@ function AddBill() {
   const priceInputRef = useRef(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const savedBill = JSON.parse(localStorage.getItem('billDetails'));
+    if (savedBill) {
+      setTitle(savedBill.title);
+      setItems(savedBill.items);
+    }
+  }, []);
+
+  useEffect(() => {
+    const stateFromLocation = location.state;
+    if (stateFromLocation) {
+      setTitle(stateFromLocation.title);
+      setItems(stateFromLocation.items);
+    }
+  }, [location.state]);
 
   const timestamp = new Intl.DateTimeFormat('en-GB', {
     year: 'numeric',
@@ -44,16 +61,44 @@ function AddBill() {
     0
   );
 
+  const saveBillDetails = () => {
+    const stateToSave = {
+      title: title,
+      timestamp: timestamp,
+      items: items.map(({ name, price, quantity }) => ({
+        name,
+        price,
+        quantity,
+      })),
+      totalAmount: totalAmount.toFixed(2),
+    };
+    localStorage.setItem('billDetails', JSON.stringify(stateToSave));
+  };
+
   const navigateAndLogState = () => {
     const stateToPass = {
       title: title,
       timestamp: timestamp,
-      items: items.map(({ name, price, quantity }) => ({ name, price, quantity })),
+      items: items.map(({ name, price, quantity }) => ({
+        name,
+        price,
+        quantity,
+      })),
       totalAmount: totalAmount.toFixed(2),
     };
 
-    console.log(stateToPass); // Log the state
+    localStorage.setItem('billDetails', JSON.stringify(stateToPass));
     navigate('/bill/split', { state: stateToPass });
+  };
+
+  const clearDataAndNavigateHome = () => {
+    localStorage.removeItem('billDetails');
+    setTitle('');
+    setItems([]);
+    setItemName('');
+    setItemQuantity(1);
+    setItemPrice('');
+    navigate('/');
   };
 
   return (
@@ -61,7 +106,11 @@ function AddBill() {
       <div className="w-full flex justify-center">
         <div className="w-full sm:max-w-xl relative">
           <nav className="flex mx-4 my-8">
-            <Link to="/" className="absolute">
+            <Link
+              to="/"
+              className="absolute"
+              onClick={clearDataAndNavigateHome}
+            >
               <ChevronLeft color="#262626" size="32" />
             </Link>
             <span className="text-2xl font-bold flex-grow text-center">
@@ -98,15 +147,15 @@ function AddBill() {
                   </div>
 
                   <div className="grid my-4">
-                    {items.map(item => (
+                    {items.map((item, index) => (
                       <div
                         key={item.serialNumber}
                         className="grid grid-flow-col grid-cols-4 gap-0 bg-inherit"
                         style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
                       >
-                        <div className="">{item.serialNumber}.</div>
+                        <div className="">{index + 1}.</div>
                         <div className="">{item.name}</div>
-                        <div className="text-end">x{item.quantity} </div>
+                        <div className="text-end">x{item.quantity}</div>
                         <div className="text-end">{item.price.toFixed(2)}</div>
                       </div>
                     ))}
