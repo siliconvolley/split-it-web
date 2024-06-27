@@ -99,13 +99,13 @@ source ./venv/bin/activate
 - For Windows
 
 ```cmd
-pip install -r requirments.txt
+pip install -r requirements.txt
 ```
 
 - For Mac or Linux
 
 ```bash
-pip3 install -r requirments.txt
+pip3 install -r requirements.txt
 ```
 
 ### 4. To run the application
