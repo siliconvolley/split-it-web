@@ -2,6 +2,18 @@
 
 This is just an initial basic implementation of a Bill Splitting Application that divides the bill specifically based on what the user has opted to share an item for.
 
+## Prerequisites
+
+##### Any machine with following packages installed
+- git
+- nodejs
+- python 3.10
+
+##### GitHub account
+- Create an account on [GitHub](https://github.com/join) (if you don't already have one)
+- Fork [this](https://github.com/UniCourt/Search-Workshop1) repository and then clone it to your machine
+- You can refer [this](https://docs.github.com/en/get-started/quickstart/fork-a-repo) guide to understand how to fork and clone
+
 ## Set up locally
 
 To set up SPLIT.IT, follow these steps:
