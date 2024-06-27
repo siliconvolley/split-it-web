@@ -14,6 +14,9 @@ This is just an initial basic implementation of a Bill Splitting Application tha
 - Fork [this](https://github.com/UniCourt/Search-Workshop1) repository and then clone it to your machine
 - You can refer [this](https://docs.github.com/en/get-started/quickstart/fork-a-repo) guide to understand how to fork and clone
 
+##### NodeJs
+- Download the NodeJS [prebuilt installer](https://nodejs.org/en/download/prebuilt-installer) (if you don't already have one)
+
 ## Set up locally
 
 To set up SPLIT.IT, follow these steps:
