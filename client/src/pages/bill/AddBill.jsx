@@ -88,7 +88,7 @@ function AddBill() {
     };
 
     localStorage.setItem('billDetails', JSON.stringify(stateToPass));
-    navigate('/bill/split', { state: stateToPass });
+    navigate('/bill/friends', { state: stateToPass });
   };
 
   const clearDataAndNavigateHome = () => {
