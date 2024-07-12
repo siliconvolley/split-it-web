@@ -10,9 +10,9 @@ This is just an initial basic implementation of a Bill Splitting Application tha
 - python 3.10
 
 ##### GitHub account
-- Create an account on [GitHub](https://github.com/join) (if you don't already have one)
-- Fork [this](https://github.com/UniCourt/Search-Workshop1) repository and then clone it to your machine
-- You can refer [this](https://docs.github.com/en/get-started/quickstart/fork-a-repo) guide to understand how to fork and clone
+- Create an account on [GitHub](https://github.com/join) (if you don't already have one).
+- Fork [this](https://github.com/UniCourt/Search-Workshop1) repository and then clone it to your machine.
+- You can refer [this](https://docs.github.com/en/get-started/quickstart/fork-a-repo) guide to understand how to fork and clone.
 
 ##### NodeJs
 - Download the NodeJS [prebuilt installer](https://nodejs.org/en/download/prebuilt-installer) (if you don't already have one)
