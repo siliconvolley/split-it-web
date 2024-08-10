@@ -132,7 +132,7 @@ function AddFriends() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full sm:max-w-xl relative">
+      <div className="w-full sm:max-w-xl relative mb-16">
         <nav className="flex mx-4 my-8">
           <Link to="/bill" className="absolute">
             <ChevronLeft color="#262626" size="32" />
