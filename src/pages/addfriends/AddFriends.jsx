@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Utensils, Plus, UserCheck, Minus } from 'lucide-react';
+import { ChevronLeft, Utensils, Plus, Minus } from 'lucide-react';
+import Bill from '../../utils/Bill';
 
 function AddFriends() {
   const location = useLocation();
@@ -17,10 +18,11 @@ function AddFriends() {
     location.state ?? JSON.parse(localStorage.getItem('billDetails')) ?? {};
   const { title, timestamp, items, totalAmount } = billDetails;
 
-  if (!title) {
-    navigate('/bill');
-    return null;
-  }
+  useEffect(() => {
+    if (!title) {
+      navigate('/bill');
+    }
+  }, [title, navigate]);
 
   const addFriend = () => {
     if (!friendName) return;
@@ -55,10 +57,12 @@ function AddFriends() {
   };
 
   const adjustPopup = () => {
-    if (window.innerWidth < 768) {
-      popup.style.transform = 'translateY(-50%)';
-    } else {
-      popup.style.transform = 'none';
+    if (popupRef.current) {
+      if (window.innerWidth < 768) {
+        popupRef.current.style.transform = 'translateY(-50%)';
+      } else {
+        popupRef.current.style.transform = 'none';
+      }
     }
   };
 
@@ -101,6 +105,31 @@ function AddFriends() {
     setItemFriends(updatedItemFriends);
   };
 
+  const handleSplitClick = () => {
+    const bill = new Bill(title, timestamp);
+
+    // Add friends as members
+    bill.addMembers(friends);
+
+    // Add items and their respective friends
+    items.forEach((item, index) => {
+      // Pass quantity to the Bill class
+      bill.addItem(item.name, item.price, item.quantity);
+      if (itemFriends[index]) {
+        bill.addMembersToItem(item.name, itemFriends[index]);
+      }
+    });
+
+    // Calculate shares
+    const shares = bill.findIndividualShares();
+
+    // Navigate to Shares component with calculated shares
+    navigate('/bill/shares', {
+      state: { shares, title, timestamp, totalAmount },
+    });
+    console.log(shares);
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full sm:max-w-xl relative">
@@ -136,23 +165,26 @@ function AddFriends() {
                       <span className="font-bold">Total:</span>
                     </p>
                     <p>
-                      <span className="text-sm font-semibold">Rs.</span>{' '}
+                      <span className="text-sm font-semibold">₹</span>{' '}
                       <span className="font-extrabold">{totalAmount}</span>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col mr-4">
-                  <Link to="/bill/split" className="my-1 text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 rounded-lg">
+                <div className="grid mr-4">
+                  <button
+                    onClick={handleSplitClick}
+                    className="my-1 text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 rounded-lg"
+                  >
                     Split
-                  </Link>
+                  </button>
                   <Link className="my-1 flex-1 text-center inner-border hover:bg-neutral-200 transition-colors duration-150 ease-in-out font-bold py-3 px-4 rounded-lg">
                     Split evenly
                   </Link>
                 </div>
               </div>
 
-              <div className="my-8">
+              <div className="mt-8 mb-12">
                 <p className="font-bold">Share with</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 my-4 items-center">
                   <div className="flex flex-col items-center">
@@ -233,21 +265,24 @@ function AddFriends() {
                           key={index}
                           className="grid grid-cols-1 sm:grid-cols-[20%_45%_15%_20%] justify-between items-center gap-x-4 gap-y-1 px-4 py-4 bg-neutral-50 shadow hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg"
                         >
-                          <p className="text-sm font-thin flex justify-between">
-                            #{index + 1}{' '}
-                            <p className="font-bold">x{item.quantity} </p>
-                          </p>
-                          <p className="font-medium flex justify-between">
-                            {' '}
-                            <p className="font-medium visible sm:hidden">
-                              Name:{' '}
-                            </p>{' '}
+                          <div className="text-sm font-thin flex justify-between">
+                            <span>#{index + 1}</span>
+                            <span className="font-bold">x{item.quantity}</span>
+                          </div>
+                          <div className="font-medium flex justify-between">
+                            <span className="font-medium visible sm:hidden">
+                              Name:
+                            </span>
                             <span className="font-extrabold">{item.name}</span>
-                          </p>
-                          <p className="font-medium flex justify-between">
-                            <p className="visible sm:hidden">Price: </p>
-                            {item.price.toFixed(2)}
-                          </p>
+                          </div>
+                          <div className="font-medium flex justify-between">
+                            <span className="visible sm:hidden">Price:</span>
+
+                            <span>
+                              <span className="text-sm font-semibold">₹</span>{' '}
+                              {item.price.toFixed(2)}
+                            </span>
+                          </div>
                           <div
                             className="w-full overflow-hidden visible sm:hidden my-1"
                             style={{
@@ -257,14 +292,17 @@ function AddFriends() {
                               height: '1px',
                             }}
                           ></div>
-                          <p className="font-medium flex justify-between visible sm:hidden">
-                            <p className="">Amount: </p>
+                          <div className="font-medium flex justify-between visible sm:hidden">
+                            <span>Amount:</span>
                             <span className="font-bold">
-                              {(
-                                item.price.toFixed(2) * item.quantity.toFixed(2)
-                              ).toFixed(2)}
+                              <span>
+                              <span className="text-sm font-semibold">₹</span>{' '} 
+                                {(
+                                  item.price.toFixed(2) * item.quantity.toFixed(2)
+                                ).toFixed(2)}
+                              </span>
                             </span>
-                          </p>
+                          </div>
                           <div
                             className="w-full overflow-hidden visible sm:hidden my-2"
                             style={{

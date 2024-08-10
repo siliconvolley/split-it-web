@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
@@ -60,20 +60,6 @@ function AddBill() {
     (acc, item) => Number(acc) + Number(item.quantity) * Number(item.price),
     0
   );
-
-  const saveBillDetails = () => {
-    const stateToSave = {
-      title: title,
-      timestamp: timestamp,
-      items: items.map(({ name, price, quantity }) => ({
-        name,
-        price,
-        quantity,
-      })),
-      totalAmount: totalAmount.toFixed(2),
-    };
-    localStorage.setItem('billDetails', JSON.stringify(stateToSave));
-  };
 
   const navigateAndLogState = () => {
     const stateToPass = {
@@ -143,7 +129,7 @@ function AddBill() {
 
                   <div className="flex justify-between">
                     <span className="font-bold">Total: </span>
-                    <span>Rs. {totalAmount.toFixed(2)}</span>
+                    <span>₹ {totalAmount.toFixed(2)}</span>
                   </div>
 
                   <div className="grid my-4">
