@@ -4,9 +4,16 @@ import { Link, useLocation } from 'react-router-dom';
 
 function Shares() {
   const location = useLocation();
-  const { shares, title, timestamp, totalAmount } = location.state || {
+  const {
+    shares,
+    title,
+    items = [],
+    timestamp,
+    totalAmount,
+  } = location.state || {
     shares: {},
     title: '',
+    items: [],
     timestamp: '',
     totalAmount: 0,
   };
@@ -18,25 +25,30 @@ function Shares() {
   }));
 
   function downloadBill() {
-    const element = document.querySelector("#screenshot");
+    const element = document.querySelector('#screenshot');
     if (element) {
       html2canvas(element, {
         scale: 2,
         useCORS: true,
-        logging: true
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'bill.png';
-        link.click();
-      }).catch(error => {
-        console.error("Error capturing screenshot:", error);
-      });
+        logging: true,
+      })
+        .then(canvas => {
+          // Replace spaces with underscores and remove commas
+          const formattedTimestamp = timestamp.replace(/\s+/g, '_').replace(/,/g, '');
+          const formattedTitle = title.replace(/\s+/g, '_').replace(/,/g, '');
+
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = `${formattedTimestamp}_${formattedTitle}.png`; // Use formatted strings
+          link.click();
+        })
+        .catch(error => {
+          console.error('Error capturing screenshot:', error);
+        });
     } else {
       console.error("Element with ID 'screenshot' not found.");
     }
   }
-
   return (
     <div className="w-full flex justify-center">
       <div className="w-full sm:max-w-xl relative mb-16">
@@ -50,31 +62,51 @@ function Shares() {
         </nav>
 
         <main className="flex flex-col justify-center">
-          <div id='screenshot' className="w-full sm:max-w-xl">
+          <div id="screenshot" className="w-full sm:max-w-xl">
             <div className="mx-4 flex flex-col items-center">
-              <div className="w-full sm:w-[34rem] my-2 p-4 flex justify-between bg-neutral-50 shadow hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg">
-                <div className="grid grid-flow-col place-items-center gap-2">
-                  <div className="bg-neutral-900 w-fit h-fit p-[0.75rem] rounded-full">
-                    <Utensils color="#eeeeee" />
+              <div className="w-full sm:w-[34rem] my-2 p-4 grid bg-neutral-50 shadow hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg relative">
+                <div className="grid grid-flow-col place-items-center justify-between gap-2">
+                  <div className="grid grid-flow-col justify-items-center place-items-center gap-2">
+                    <div className="bg-neutral-900 w-fit h-fit p-[0.75rem] rounded-full">
+                      <Utensils color="#eeeeee" />
+                    </div>
+                    <div id="just-a-wrapper">
+                      <p className="font-bold text-[1.25rem] ">{title}</p>
+                      <p className="text-sm text-[1.25rem]">{timestamp}</p>
+                    </div>
                   </div>
-                  <div className="grid place-items-start gap-2">
-                    <p className="font-bold text-[1.25rem] leading-none">
-                      {title}
+                  <div className="grid justify-items-end gap-[0.25rem]">
+                    <p className="font-medium leading-none text-[0.95rem]">
+                      Total
                     </p>
-                    <p className="text-sm text-[1.25rem]">{timestamp}</p>
+                    <p className="text-[1.225rem] font-light leading-none ">
+                      ₹ <span className="font-extrabold">{totalAmount}</span>
+                    </p>
                   </div>
                 </div>
 
-                <div className="grid justify-items-end gap-[0.25rem]">
-                  <p className="font-medium leading-none text-[0.95rem]">
-                    Total
-                  </p>
-                  <p className="text-[1.225rem] font-light leading-none ">
-                    ₹{' '}
-                    <span className="font-extrabold">
-                      {totalAmount}
-                    </span>
-                  </p>
+                <div
+                  className="w-full overflow-hidden my-4"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(to right, #000 50%, transparent 50%)',
+                    backgroundSize: '10px 1px',
+                    height: '1px',
+                  }}
+                ></div>
+                <div id="bill-details">
+                  {items.map((item, index) => (
+                    <div
+                      key={item.serialNumber}
+                      className="grid grid-flow-col grid-cols-4 gap-0 bg-inherit"
+                      style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
+                    >
+                      <div className="">{index + 1}.</div>
+                      <div className="">{item.name}</div>
+                      <div className="text-end">x{item.quantity}</div>
+                      <div className="text-end">{item.price.toFixed(2)}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -82,7 +114,7 @@ function Shares() {
                 Individual Shares
               </h2>
 
-              <ul className='grid w-full sm:w-[34rem]'>
+              <ul className="grid w-full sm:w-[34rem]">
                 {sharesArray.map((share, index) => (
                   <li
                     key={index}
@@ -111,11 +143,11 @@ function Shares() {
                 ))}
               </ul>
               <button
-                  className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 my-4 rounded-lg grid place-items-center"
-                  onClick={downloadBill}
-                >
-                  Download Bill
-                </button>
+                className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 my-4 rounded-lg grid place-items-center"
+                onClick={downloadBill}
+              >
+                Download Bill
+              </button>
             </div>
           </div>
         </main>

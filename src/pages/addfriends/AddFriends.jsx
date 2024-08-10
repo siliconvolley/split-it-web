@@ -125,7 +125,7 @@ function AddFriends() {
 
     // Navigate to Shares component with calculated shares
     navigate('/bill/shares', {
-      state: { shares, title, timestamp, totalAmount },
+      state: { shares, title, timestamp, totalAmount, items },
     });
     console.log(shares);
   };
