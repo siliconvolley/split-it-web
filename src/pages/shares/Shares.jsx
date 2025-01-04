@@ -1,15 +1,18 @@
 import html2canvas from 'html2canvas';
 import { ChevronLeft, Utensils } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 function Shares() {
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     shares,
     title,
     items = [],
     timestamp,
     totalAmount,
+    friends,
+    itemFriends,
   } = location.state || {
     shares: {},
     title: '',
@@ -49,13 +52,21 @@ function Shares() {
       console.error("Element with ID 'screenshot' not found.");
     }
   }
+
+  function handleBackClick() {
+    navigate('/bill/friends', {
+      state: { title, timestamp, items, totalAmount, friends, itemFriends },
+    });
+    console.log(friends)
+  }
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full sm:max-w-xl relative mb-16">
         <nav className="flex mx-4 my-8">
-          <Link to="/bill/friends" className="absolute">
+          <button onClick={handleBackClick} className="absolute">
             <ChevronLeft color="#262626" size="32" />
-          </Link>
+          </button>
           <span className="text-2xl font-bold flex-grow text-center">
             Share Details
           </span>
@@ -142,13 +153,15 @@ function Shares() {
                   </li>
                 ))}
               </ul>
-              <button
-                className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 my-4 rounded-lg grid place-items-center"
-                onClick={downloadBill}
-              >
-                Download Bill
-              </button>
             </div>
+          </div>
+          <div className="flex justify-center">
+            <button
+              className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 my-4 rounded-lg grid place-items-center"
+              onClick={downloadBill}
+            >
+              Download Bill
+            </button>
           </div>
         </main>
       </div>
