@@ -85,6 +85,20 @@ function AddFriends() {
     setSelectedItemIndex(index);
   };
 
+  const handleAllSelect = () => {
+    const updatedItemFriends = { ...itemFriends };
+    if (!updatedItemFriends[selectedItemIndex]) {
+      updatedItemFriends[selectedItemIndex] = [];
+    }
+    friends.forEach(friend => {
+      if (!updatedItemFriends[selectedItemIndex].includes(friend)) {
+        updatedItemFriends[selectedItemIndex].push(friend);
+      }
+    });
+    setItemFriends(updatedItemFriends);
+    setSelectedItemIndex(null);
+  };
+
   const handleFriendSelect = friend => {
     const updatedItemFriends = { ...itemFriends };
     if (!updatedItemFriends[selectedItemIndex]) {
@@ -326,6 +340,7 @@ function AddFriends() {
                                   Select Friend
                                 </h3>
                                 <ul>
+                                  <li onClick={() => handleAllSelect()} className="cursor-pointer p-2 hover:bg-gray-200 rounded">ALL</li>
                                   {friends.map((friend, i) => (
                                     <li
                                       key={i}
