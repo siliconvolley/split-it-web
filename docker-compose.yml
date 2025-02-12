@@ -1,10 +1,9 @@
 services:
-  vite:
+  app:
     build: .
     ports:
       - "5173:5173"
-    volumes:
-      - .:/src
-      - /src/node_modules
-    stdin_open: true
-    tty: true
+    expose:
+      - "5173"
+    working_dir: /app
+    command: ["npm", "run", "dev"]
