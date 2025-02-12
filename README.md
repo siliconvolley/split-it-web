@@ -1,30 +1,42 @@
-# Welcome to SPLIT.IT
+<div align="center">
+  <img src="assets/desktop-home-page.png" alt="Desktop Home Page"/>
+</div>
 
-This is just an initial basic implementation of a Bill Splitting Application that divides the bill specifically based on what the user has opted to share an item for.
+## About
 
-## Prerequisites
+**SPLIT.IT** is a browser-based bill-splitting app that lets users easily divide expenses, track **shared costs**, and download bill summaries—ensuring fair payment distribution for groups. ⚖️💸
 
-- Git
-- NodeJS
+<div align="center" alt="Mobile Mockups" style="display: grid; grid-template-columns: repeat(3, 1fr);">
+  <img src="assets/mobile-addbill-page.png" alt="Mobile Add Bill Page" width="200"/>
+  <img src="assets/mobile-addfriends-page.png" alt="Mobile Add Friends Page" width="200"/>
+  <img src="assets/mobile-billdetails-page.png" alt="Mobile Bill Details Page" width="200"/>
+</div>
 
-## Set up locally
 
-### 1. Clone the Repository
+## Installation
+
+Clone the Repository & navigate into the directory
 
 ```bash
 git clone https://github.com/siliconvolley/split-it-web.git
+cd split-it-web
 ```
 
-### 2. To set up client-side:
-
-2.1 Navigate to the `split-it-web` directory, and Install the dependencies:
+Use Docker to build the container
 
 ```bash
-cd split-it-web
+docker compose up
+```
+
+### OR
+
+Install dependencies
+
+```bash
 npm install
 ```
 
-### 3. To run the application
+Run the application
 
 ```bash
 npm run dev
