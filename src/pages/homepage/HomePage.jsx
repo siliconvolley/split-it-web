@@ -6,7 +6,7 @@ function HomePage() {
   return (
     <>
       <div className="flex justify-center items-center min-h-screen ">
-        <div className="mx-5 flex flex-col justify-end align-middle h-dvh max-w-[40rem] w-full">
+        <div className="mx-5 flex flex-col justify-end align-middle h-full max-w-[40rem] w-full">
           <div>
             <img
               src={HomeIllustration}
@@ -15,17 +15,17 @@ function HomePage() {
             />
           </div>
           <div className="home-title-container">
-            <div className="text-[1.75rem] font-light">welcome to</div>
-            <div className="uppercase text-[5rem] font-extrabold mt-[-0.5rem]">
+            <p className="text-[1.75rem] font-light">welcome to</p>
+            <p className="uppercase text-[5rem] font-extrabold mt-[-1.5rem]">
               Split.it
-            </div>
-            <span className="w-[30rem] text-[0.9rem] text-justify lg:text-[1.25rem]">
+            </p>
+            <span className="w-[30rem] text-[1rem] text-justify font-light lg:text-[1.425rem]">
               "<span className="underline font-semibold">Seamlessly</span>{' '}
               divide your bills according to individual choices or equally,
               guaranteeing everyone pays their fair share with ease."
             </span>
           </div>
-          <div className="flex justify-center my-[6rem]">
+          <div className="flex justify-center my-[4rem]">
             <Link
               to="/bill"
               className="w-[15rem] text-center bg-neutral-800 transition-colors duration-150 ease-in-out hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-lg"
