@@ -25,12 +25,18 @@ function HomePage() {
               guaranteeing everyone pays their fair share with ease."
             </span>
           </div>
-          <div className="flex justify-center my-[4rem]">
+          <div className="flex flex-col items-center justify-center my-[4rem] gap-2">
             <Link
               to="/bill"
               className="w-[15rem] text-center bg-neutral-800 transition-colors duration-150 ease-in-out hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-lg"
             >
               Enter Bill
+            </Link>
+            <Link
+              to="/ocr"
+              className="coming-soon-banner w-[15rem] text-center bg-neutral-600 transition-colors duration-150 ease-in-out hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-lg"
+            >
+              Upload Bill
             </Link>
           </div>
         </div>
