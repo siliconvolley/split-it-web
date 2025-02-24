@@ -46,14 +46,14 @@ function UploadImage() {
         />
         Upload Image
       </button>
-
+  
       {uploadedImage && <img src={URL.createObjectURL(uploadedImage)} alt='thumbnail' className='w-[32rem] my-4' />}
-
+  
       <h1 className='text-2xl font-bold underline mt-8'>Extracted Text:</h1>
       {isLoading ? (
         <p className='my-4 w-[80vw]'>Extracting text... Please wait.</p>
       ) : (
-        extractedText && <p className='my-4 w-[90vw]'>{extractedText}</p>
+        extractedText && <p className='my-4 w-[90vw] whitespace-pre-wrap'>{extractedText}</p>
       )}
     </div>
   );
