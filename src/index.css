@@ -9,3 +9,24 @@ body {
 .inner-border {
     box-shadow: inset 0 0 0 2px #262626;
 }
+
+.coming-soon-banner {
+    position: relative;
+    display: inline-block;
+}
+
+.coming-soon-banner::after {
+    content: 'Coming Soon';
+    position: absolute;
+    top: 25px;
+    right: -10px;
+    background-color: cornflowerblue;
+    color: white;
+    font-size: 0.655rem;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transform: rotate(-10deg);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
