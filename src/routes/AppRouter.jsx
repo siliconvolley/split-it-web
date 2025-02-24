@@ -1,8 +1,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import HomePage from '@pages/homepage/HomePage';
+import HomePage from '@pages/home/HomePage';
 import AddBill from '@pages/bill/AddBill';
-import AddFriends from '@pages/addfriends/AddFriends';
+import AddFriends from '@pages/friends/AddFriends';
 import Shares from '@pages/shares/Shares';
 import UploadImage from '@pages/ocr/UploadImage';
 
