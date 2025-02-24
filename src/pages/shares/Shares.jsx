@@ -1,6 +1,7 @@
 import html2canvas from 'html2canvas';
 import { ChevronLeft, Utensils } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Footer from '../../components/footer';
 
 function Shares() {
   const location = useLocation();
@@ -61,6 +62,7 @@ function Shares() {
   }
 
   return (
+    <>
     <div className="w-full flex justify-center">
       <div className="w-full sm:max-w-xl relative mb-16">
         <nav className="flex mx-4 my-8">
@@ -166,6 +168,8 @@ function Shares() {
         </main>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 

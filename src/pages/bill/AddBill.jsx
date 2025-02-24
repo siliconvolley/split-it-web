@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import Footer from '../../components/footer';
 
 function AddBill() {
   const [title, setTitle] = useState('');
@@ -212,6 +213,7 @@ function AddBill() {
           </main>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Utensils, Plus, Minus } from 'lucide-react';
 import Bill from '../../utils/Bill';
+import Footer from '../../components/footer';
 
 function AddFriends() {
   const location = useLocation();
@@ -148,6 +149,7 @@ function AddFriends() {
   };
 
   return (
+    <>
     <div className="w-full flex justify-center">
       <div className="w-full sm:max-w-xl relative mb-16">
         <nav className="flex mx-4 my-8">
@@ -360,6 +362,8 @@ function AddFriends() {
         </main>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import HomeIllustration from '../../public/home_illustration.png';
+import Footer from '../../components/footer';
 
 function HomePage() {
   return (
@@ -41,6 +42,7 @@ function HomePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
