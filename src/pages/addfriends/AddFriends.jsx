@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Utensils, Plus, Minus } from 'lucide-react';
 import Bill from '../../utils/Bill';
-import Footer from '../../components/footer';
+import Footer from '../../components/Footer';
 
 function AddFriends() {
   const location = useLocation();

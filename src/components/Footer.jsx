@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaGithub } from 'react-icons/fa'
 
 function Footer() {
@@ -11,4 +10,4 @@ function Footer() {
   )
 }
 
-export default Footer
+export default Footer;

@@ -1,7 +1,7 @@
 import html2canvas from 'html2canvas';
 import { ChevronLeft, Utensils } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Footer from '../../components/footer';
+import Footer from '../../components/Footer';
 
 function Shares() {
   const location = useLocation();
@@ -168,7 +168,7 @@ function Shares() {
         </main>
       </div>
     </div>
-    <Footer />
+    <Footer/>
     </>
   );
 }
