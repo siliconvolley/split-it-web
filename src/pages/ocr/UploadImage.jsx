@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createWorker } from 'tesseract.js';
 
 export default function UploadImage() {
