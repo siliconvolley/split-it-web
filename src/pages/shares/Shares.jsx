@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas';
 import { ChevronLeft, Utensils } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-function Shares() {
+export default function Shares() {
   const location = useLocation();
   const navigate = useNavigate();
   const {
@@ -168,5 +168,3 @@ function Shares() {
     </div>
   );
 }
-
-export default Shares;

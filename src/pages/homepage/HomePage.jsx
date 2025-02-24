@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import HomeIllustration from '../../public/home_illustration.png';
+import HomeIllustration from '@public/home_illustration.png';
 
-function HomePage() {
+export default function HomePage() {
   return (
     <>
       <div className="flex justify-center items-center min-h-screen ">
@@ -44,5 +44,3 @@ function HomePage() {
     </>
   );
 }
-
-export default HomePage;

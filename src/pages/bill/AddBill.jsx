@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
-function AddBill() {
+export default function AddBill() {
   const [title, setTitle] = useState('');
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState('');
@@ -215,5 +215,3 @@ function AddBill() {
     </>
   );
 }
-
-export default AddBill;

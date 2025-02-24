@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createWorker } from 'tesseract.js';
 
-function UploadImage() {
+export default function UploadImage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +21,7 @@ function UploadImage() {
     try {
       const imageUrl = URL.createObjectURL(imageFile);
       const { data } = await worker.recognize(imageUrl);
+      console.log(`⚠️ Extracted Text: \n${data.text}`);
       setExtractedText(data.text);
     } catch (error) {
       console.error('❌ OCR Error:', error);
@@ -58,5 +59,3 @@ function UploadImage() {
     </div>
   );
 }
-
-export default UploadImage;

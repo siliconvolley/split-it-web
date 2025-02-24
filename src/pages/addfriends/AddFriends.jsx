@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Utensils, Plus, Minus } from 'lucide-react';
-import Bill from '../../utils/Bill';
+import Bill from '@utils/Bill';
 
-function AddFriends() {
+export default function AddFriends() {
   const location = useLocation();
   const navigate = useNavigate();
   const [friends, setFriends] = useState(location.state?.friends || JSON.parse(localStorage.getItem('friends')) || []);
@@ -362,5 +362,3 @@ function AddFriends() {
     </div>
   );
 }
-
-export default AddFriends;
