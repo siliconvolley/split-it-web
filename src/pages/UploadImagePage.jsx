@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createWorker } from 'tesseract.js';
 
-export default function UploadImage() {
+export default function UploadImagePage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
