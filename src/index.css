@@ -30,3 +30,14 @@ body {
         box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
     }
 }
+
+.remove-spinner-button {
+  appearance: textfield;
+}
+
+.remove-spinner-button::-webkit-outer-spin-button,
+.remove-spinner-button::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
