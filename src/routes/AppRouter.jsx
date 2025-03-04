@@ -1,34 +1,39 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import HomePage from '@/pages/HomePage';
-import AddBill from '@/pages/AddBillPage';
-import AddFriends from '@/pages/AddFriendsPage';
-import Shares from '@/pages/DisplaySharesPage';
-import UploadImage from '@/pages/UploadImagePage';
+import AddBillPage from '@/pages/AddBillPage';
+import AddFriendsPage from '@/pages/AddFriendsPage';
+import DisplaySharesPage from '@/pages/DisplaySharesPage';
+import UploadImagePage from '@/pages/UploadImagePage';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage/>
+    element: <HomePage />,
   },
   {
     path: '/bill',
-    element: <AddBill/>
+    element: <AddBillPage />,
   },
   {
     path: '/bill/friends',
-    element: <AddFriends/>
+    element: <AddFriendsPage />,
   },
   {
     path: '/bill/shares',
-    element: <Shares/>
+    element: <DisplaySharesPage />,
   },
   {
     path: '/ocr',
-    element: <UploadImage/>
-  }
+    element: <UploadImagePage />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
 ]);
 
 export default function AppRouter() {
-    return(<RouterProvider router={router} />);
+  return <RouterProvider router={router} />;
 }
