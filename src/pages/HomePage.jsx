@@ -1,6 +1,5 @@
 import HomeIllustration from '@/public/home_illustration.png';
 import Button from '@/components/Button';
-import ComingSoonButton from '@/components/ComingSoonButton';
 
 export default function HomePage() {
   return (

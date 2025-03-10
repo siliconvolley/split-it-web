@@ -8,9 +8,11 @@ export default function AddBillPage() {
     <PageLayout>
       <Navbar path="/" title="Add Bill" />
       <BillEntryForm />
-      <Button path="/bill/friends" className="my-16">
-        Add Bill
-      </Button>
+      <div className="flex self-center mt-8">
+        <Button path="/bill/friends" className="my-16">
+          Add Bill
+        </Button>
+      </div>
     </PageLayout>
   );
 }
