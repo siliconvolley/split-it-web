@@ -21,13 +21,13 @@ export default function HomePage() {
           guaranteeing everyone pays their fair share with ease."
         </span>
       </div>
-      <div className="grid place-items-center gap-4">
-        <Button path='/bill' className='mt-8'>
+      <div className="grid place-items-center gap-4 mt-8">
+        <Button path='/bill'>
           Enter Bill
         </Button> 
-        <ComingSoonButton path='/ocr'>
+        <Button path='/ocr' type='coming-soon'>
           Upload Bill
-        </ComingSoonButton>
+        </Button>
       </div>
     </div>
   );
