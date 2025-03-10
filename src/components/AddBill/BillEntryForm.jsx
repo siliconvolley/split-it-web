@@ -9,7 +9,7 @@ import {
   saveBillItems,
 } from '@/utils/BillStorage';
 
-export default function AddBill() {
+export default function BillEntryForm() {
   const [billTitle, setBillTitle] = useState(initializeBillTitle);
   const [items, setItems] = useState(initializeBillItems);
 
@@ -50,19 +50,19 @@ export default function AddBill() {
   };
 
   const handleItemNameInputFocus = () => {
-    if (itemNameInputRef.current)
-      itemNameInputRef.current.focus()
+    if (itemNameInputRef.current) itemNameInputRef.current.focus();
   };
 
   return (
     <main className="place-items-center px-2 py-4">
       <div className="bg-neutral-50 flex flex-col p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out">
         {/* <DisplayBillTitle /> */}
+
         <input
           name="billTitle"
           type="text"
           placeholder="Enter Bill Title"
-          className="bg-purple-500 bg-inherit h-8 text-xl text-center font-extrabold"
+          className="bg-inherit h-8 text-xl text-center font-extrabold"
           value={billTitle}
           onChange={e => {
             const newBillTitle = e.target.value;
@@ -74,7 +74,8 @@ export default function AddBill() {
         <span className="text-center">{timestamp}</span>
 
         {/* <AddBillItemsList /> */}
-        <div className="bg-red-500 grid my-2">
+
+        <div className="grid my-2">
           <div
             className="bg-inherit grid grid-flow-col grid-cols-4 items-center gap-0 font-semibold text-xs text-neutral-500"
             style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
@@ -210,13 +211,15 @@ export default function AddBill() {
         </div>
 
         {/* <DisplayBillTotal /> */}
-        <div className="bg-blue-500 flex justify-between pt-1">
+
+        <div className="flex justify-between pt-1">
           <span className="uppercase font-bold">Total: </span>
           <span className="font-bold">₹ {totalAmount.toFixed(2)}</span>
         </div>
 
         {/* <AddBillControls /> */}
-        <div className="bg-orange-500 flex justify-between text-sm">
+
+        <div className="flex justify-between text-sm">
           <button
             className="bg-neutral-100 flex flex-row items-center shadow mt-4 py-1 px-2 rounded-lg font-semibold text-center text-neutral-800 hover:bg-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleClearBillData}
