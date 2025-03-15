@@ -1,6 +1,23 @@
+import { useAddBill } from "@/hooks/useAddBill";
+import { saveBillItems } from "@/utils/BillStorage";
+
 export default function BillEntryItemsList() {
+  const {
+    items,
+    setItems,
+    itemName,
+    setItemName,
+    itemQuantity,
+    setItemQuantity,
+    itemPrice,
+    setItemPrice,
+    itemNameInputRef,
+    addItem,
+    handleItemNameInputFocus,
+  } = useAddBill();
+
   return (
-    <div className="bg-red-200 grid my-2">
+    <div className="grid my-2">
       <div
         className="bg-inherit grid grid-flow-col grid-cols-4 items-center gap-0 font-semibold text-xs text-neutral-500"
         style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
