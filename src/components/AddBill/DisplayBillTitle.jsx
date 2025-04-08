@@ -1,4 +1,5 @@
-import { useAddBill } from "@/hooks/useAddBill";
+import { useAddBill } from '@/hooks/useAddBill';
+import { saveTimestamp } from '@/utils/BillStorage';
 
 export default function DisplayBillTitle() {
   const { billTitle, setBillTitle, timestamp, saveBillTitle } = useAddBill();
@@ -15,6 +16,7 @@ export default function DisplayBillTitle() {
           const newBillTitle = e.target.value;
           setBillTitle(newBillTitle);
           saveBillTitle(newBillTitle);
+          saveTimestamp(timestamp);
         }}
       />
       <span className="text-center">{timestamp}</span>

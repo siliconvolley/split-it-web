@@ -1,12 +1,25 @@
 import { Link } from 'react-router-dom';
 
-export default function Button({ path, className, type, children }) {
+const getButtonType = type => {
+  switch (type) {
+    case 'coming-soon':
+      return 'coming-soon-banner bg-neutral-600 text-white hover:bg-neutral-700';
+    case 'secondary':
+      return 'inner-border bg-neutral-150 text-neutral-800 hover:bg-neutral-300';
+    default:
+      return 'bg-neutral-800 text-white hover:bg-neutral-700';
+  }
+}
+
+export default function Button({ path, className, type, children, onClick }) {
   return (
     <Link
       to={path}
-      className={`w-[15rem] py-3 px-4 rounded-lg font-bold text-center text-white transition-colors duration-150 ease-in-out hover:bg-neutral-700 
+      className={`py-3 px-4 rounded-lg font-bold text-center transition-colors duration-150 ease-in-out  
         ${className} 
-        ${type === 'coming-soon' ? 'coming-soon-banner bg-neutral-600' : 'bg-neutral-800'}`}
+        ${getButtonType(type)}
+      `}
+      onClick={onClick}
     >
       {children}
     </Link>

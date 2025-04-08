@@ -6,6 +6,7 @@ import {
   initializeBillItems,
   saveBillTitle,
   saveBillItems,
+  saveTimestamp,
 } from '@/utils/BillStorage';
 
 export const AddBillContext = createContext(null);
@@ -46,6 +47,7 @@ export default function AddBillContextProvider({ children }) {
     setItems([]);
     saveBillTitle('');
     saveBillItems([]);
+    saveTimestamp('');
   };
 
   const handleItemNameInputFocus = () => {

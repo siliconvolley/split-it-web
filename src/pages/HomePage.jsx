@@ -15,16 +15,16 @@ export default function HomePage() {
           Split.it
         </h1>
         <span className="font-light sm:text-xl">
-          "<span className="underline font-semibold">Seamlessly</span>{' '}
-          divide your bills according to individual choices or equally,
-          guaranteeing everyone pays their fair share with ease."
+          "<span className="underline font-semibold">Seamlessly</span> divide
+          your bills according to individual choices or equally, guaranteeing
+          everyone pays their fair share with ease."
         </span>
       </div>
       <div className="grid place-items-center gap-4 mt-8">
-        <Button path='/bill'>
+        <Button path="/bill" className="w-[15rem]">
           Enter Bill
-        </Button> 
-        <Button path='/ocr' type='coming-soon'>
+        </Button>
+        <Button path="/ocr" type="coming-soon" className="w-[15rem]">
           Upload Bill
         </Button>
       </div>

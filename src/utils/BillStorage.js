@@ -28,3 +28,10 @@ export function saveBillItems(billItems) {
     ? localStorage.setItem('items', JSON.stringify(billItems))
     : localStorage.removeItem('items');
 }
+
+// Timestamp
+export function saveTimestamp(timestamp) {
+  timestamp
+    ? localStorage.setItem('timestamp', timestamp)
+    : localStorage.removeItem('timestamp');
+}
