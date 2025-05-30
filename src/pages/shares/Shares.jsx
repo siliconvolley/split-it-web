@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import { ChevronLeft, Utensils } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 
 function Shares() {
@@ -37,13 +37,18 @@ function Shares() {
         logging: true,
       })
         .then(canvas => {
-          // Replace spaces with underscores and remove commas
-          const formattedTimestamp = timestamp.replace(/\s+/g, '_').replace(/,/g, '');
-          const formattedTitle = title.replace(/\s+/g, '_').replace(/,/g, '');
+          const formattedDate = new Date(timestamp).toISOString().slice(0, 10);
+          const formattedTime = new Date(timestamp).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+          const formattedTitle = title.trim();
+          const fileName = `${formattedDate} ${formattedTime} ${formattedTitle}.png`;
 
           const link = document.createElement('a');
           link.href = canvas.toDataURL('image/png');
-          link.download = `${formattedTimestamp}_${formattedTitle}.png`; // Use formatted strings
+          link.download = fileName;
           link.click();
         })
         .catch(error => {
