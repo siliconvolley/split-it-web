@@ -99,9 +99,10 @@ export default function BillEntryItemsList() {
       ))}
 
       <div
-        className="grid grid-cols-3"
-        style={{ gridTemplateColumns: '60% 20% 20%' }}
+        className="grid grid-cols-4 items-center"
+        style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
       >
+        <span>{items.length+1}.</span>
         <input
           name="newItemName"
           ref={itemNameInputRef}
