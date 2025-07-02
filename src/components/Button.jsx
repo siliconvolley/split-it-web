@@ -9,18 +9,26 @@ const getButtonType = type => {
     default:
       return 'bg-neutral-800 text-white hover:bg-neutral-700';
   }
-}
+};
 
-export default function Button({ path, className, type, children, onClick }) {
-  return (
-    <Link
-      to={path}
-      className={`py-3 px-4 rounded-lg font-bold text-center transition-colors duration-150 ease-in-out  
-        ${className} 
-        ${getButtonType(type)}
-      `}
-      onClick={onClick}
-    >
+export default function Button({
+  path,
+  className,
+  type,
+  children,
+  onClick,
+  disabled,
+}) {
+  const buttonClasses = `py-3 px-4 rounded-lg font-bold text-center transition-colors duration-150 ease-in-out 
+    ${className} 
+    ${getButtonType(type)}
+    ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
+  `;
+
+  return disabled ? (
+    <div className={buttonClasses}>{children}</div>
+  ) : (
+    <Link to={path} className={buttonClasses} onClick={onClick}>
       {children}
     </Link>
   );

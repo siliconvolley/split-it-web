@@ -54,6 +54,13 @@ export default function AddBillContextProvider({ children }) {
     if (itemNameInputRef.current) itemNameInputRef.current.focus();
   };
 
+  const checkIfBillExists = () => {
+    if (!billTitle.trim() || items.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
   const value = {
     // State
     billTitle,
@@ -66,27 +73,26 @@ export default function AddBillContextProvider({ children }) {
     setItemQuantity,
     itemPrice,
     setItemPrice,
-    
+
     // Computed values
     timestamp,
     totalAmount,
-    
+
     // Refs
     itemNameInputRef,
-    
+
     // Actions
     addItem,
     handleClearBillData,
     handleItemNameInputFocus,
-    
+    checkIfBillExists,
+
     // Utils
     saveBillTitle,
-    saveBillItems
+    saveBillItems,
   };
 
   return (
-    <AddBillContext.Provider value={value}>
-      {children}
-    </AddBillContext.Provider>
+    <AddBillContext.Provider value={value}>{children}</AddBillContext.Provider>
   );
 }
