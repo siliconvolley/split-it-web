@@ -1,19 +1,14 @@
-import { useAddBill } from "@/hooks/useAddBill";
-import { saveBillItems } from "@/utils/BillStorage";
+import { useAddBill } from '@/hooks/useAddBill';
 
 export default function BillEntryItemsList() {
   const {
     items,
-    setItems,
-    itemName,
-    setItemName,
-    itemQuantity,
-    setItemQuantity,
-    itemPrice,
-    setItemPrice,
+    newItem,
+    setNewItem,
     itemNameInputRef,
     addItem,
     handleItemNameInputFocus,
+    handleItemUpdate
   } = useAddBill();
 
   return (
@@ -27,6 +22,8 @@ export default function BillEntryItemsList() {
         <h3 className="text-end pr-2">Quantity</h3>
         <h3 className="text-end pr-2">Price</h3>
       </div>
+
+      {/* Existing Items */}
       {items.map((item, index) => (
         <div
           key={index}
@@ -41,16 +38,7 @@ export default function BillEntryItemsList() {
             placeholder="Enter Item Name"
             value={item.name}
             className="bg-inherit w-full px-2 py-1 resize-none overflow-hidden"
-            onChange={e => {
-              const updatedItemName = e.target.value;
-              setItems(prevItems => {
-                const updatedItems = prevItems.map((item, i) =>
-                  i === index ? { ...item, name: updatedItemName } : item
-                );
-                saveBillItems(updatedItems);
-                return updatedItems;
-              });
-            }}
+            onChange={e => handleItemUpdate(index, 'name', e.target.value)}
             onInput={e => {
               e.target.style.height = 'auto';
               e.target.style.height = `${e.target.scrollHeight}px`;
@@ -62,21 +50,13 @@ export default function BillEntryItemsList() {
             type="number"
             min="0"
             placeholder="Quantity"
-            value={item.quantity || ''}
+            value={item.quantity}
             className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
-            onChange={e => {
-              const updatedItemQuantity = Number(e.target.value);
-              setItems(prevItems => {
-                const updatedItems = prevItems.map((item, i) =>
-                  i === index
-                    ? { ...item, quantity: updatedItemQuantity }
-                    : item
-                );
-                saveBillItems(updatedItems);
-                return updatedItems;
-              });
-            }}
+            onChange={e =>
+              handleItemUpdate(index, 'quantity', Number(e.target.value))
+            }
           />
+
           <input
             name="updatedItemPrice"
             type="number"
@@ -84,65 +64,53 @@ export default function BillEntryItemsList() {
             placeholder="Price"
             value={item.price || ''}
             className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
-            onChange={e => {
-              const updatedItemPrice = Number(e.target.value);
-              setItems(prevItems => {
-                const updatedItems = prevItems.map((item, i) =>
-                  i === index ? { ...item, price: updatedItemPrice } : item
-                );
-                saveBillItems(updatedItems);
-                return updatedItems;
-              });
-            }}
+            onChange={e =>
+              handleItemUpdate(index, 'price', Number(e.target.value))
+            }
           />
         </div>
       ))}
 
+      {/* New Item Entry */}
       <div
         className="grid grid-cols-4 items-center"
         style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
       >
-        <span>{items.length+1}.</span>
+        <span>{items.length + 1}.</span>
         <input
           name="newItemName"
           ref={itemNameInputRef}
           type="text"
           placeholder="Enter Item Name"
-          value={itemName}
+          value={newItem.name}
           className="bg-inherit w-full px-2 py-1"
-          onChange={e => {
-            const newItemName = e.target.value;
-            setItemName(newItemName);
-          }}
+          onChange={e => setNewItem({ ...newItem, name: e.target.value })}
         />
         <input
           name="newItemQuantity"
           type="number"
           min="0"
           placeholder="Quantity"
-          value={itemQuantity || ''}
+          value={newItem.quantity}
           className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
           onChange={e => {
-            const newItemQuantity = e.target.value
-              ? Number(e.target.value)
-              : '';
-            setItemQuantity(newItemQuantity);
+            const value = e.target.value ? Number(e.target.value) : 1;
+            setNewItem({ ...newItem, quantity: value });
           }}
         />
-
         <input
           name="newItemPrice"
           type="number"
           min="0"
           placeholder="Price"
-          value={itemPrice || ''}
+          value={newItem.price || ''}
           className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
           onChange={e => {
-            const newItemPrice = e.target.value ? Number(e.target.value) : '';
-            setItemPrice(newItemPrice);
+            const value = e.target.value ? Number(e.target.value) : 0;
+            setNewItem({ ...newItem, price: value });
           }}
           onKeyDown={e => {
-            if (e.key == 'Enter') {
+            if (e.key === 'Enter') {
               addItem();
               handleItemNameInputFocus();
             }

@@ -1,8 +1,7 @@
 import { useAddBill } from '@/hooks/useAddBill';
-import { saveTimestamp } from '@/utils/BillStorage';
 
 export default function DisplayBillTitle() {
-  const { billTitle, setBillTitle, timestamp, saveBillTitle } = useAddBill();
+  const { billTitle, setBillTitle, timestamp } = useAddBill();
 
   return (
     <>
@@ -12,12 +11,7 @@ export default function DisplayBillTitle() {
         placeholder="Enter Bill Title"
         className="bg-inherit h-8 text-lg text-center font-extrabold"
         value={billTitle}
-        onChange={e => {
-          const newBillTitle = e.target.value;
-          setBillTitle(newBillTitle);
-          saveBillTitle(newBillTitle);
-          saveTimestamp(timestamp);
-        }}
+        onChange={e => setBillTitle(e.target.value)}
       />
       <span className="text-center">{timestamp}</span>
     </>

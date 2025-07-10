@@ -1,37 +1,78 @@
-export function clearBillData() {
-  localStorage.removeItem('billTitle');
-  localStorage.removeItem('items');
+// Bill data structure
+const initialBillData = {
+  title: '',
+  timestamp: '',
+  totalAmount: 0,
+  friends: [],
+  items: [],
+};
+
+// Initialize Bill Data
+export function initializeBillData() {
+  localStorage.setItem('billData', JSON.stringify(initialBillData));
+  return initialBillData;
 }
 
-// Bill Title
-export function initializeBillTitle() {
-  const savedBillTitle = localStorage.getItem('billTitle');
-  return savedBillTitle ? String(savedBillTitle) : '';
+// Get full bill data
+export function getBillData() {
+  const savedBillData = localStorage.getItem('billData');
+  return savedBillData ? JSON.parse(savedBillData) : initialBillData;
 }
 
-export function saveBillTitle(billTitle) {
-  billTitle
-    ? localStorage.setItem('billTitle', billTitle)
-    : localStorage.removeItem('billTitle');
+// Save full bill data
+export function saveBillData(billData) {
+  localStorage.setItem('billData', JSON.stringify(billData));
 }
 
-// Bill Items
-export function initializeBillItems() {
-  const savedBillItems = localStorage.getItem('items');
-  return savedBillItems ? JSON.parse(savedBillItems) : [];
+// Utility functions to access/update specific parts of bill data
+export function getBillTitle() {
+  return getBillData().title;
 }
 
-export function saveBillItems(billItems) {
-  if (!Array.isArray(billItems)) throw new Error('billItems is not an Array');
-
-  billItems.length
-    ? localStorage.setItem('items', JSON.stringify(billItems))
-    : localStorage.removeItem('items');
+export function saveBillTitle(title) {
+  const billData = getBillData();
+  billData.title = title;
+  saveBillData(billData);
 }
 
-// Timestamp
+export function getBillItems() {
+  return getBillData().items;
+}
+
+export function saveBillItems(items) {
+  if (!Array.isArray(items)) throw new Error('items is not an Array');
+  const billData = getBillData();
+  billData.items = items;
+  saveBillData(billData);
+}
+
+export function getBillFriends() {
+  return getBillData().friends;
+}
+
+export function saveBillFriends(friends) {
+  if (!Array.isArray(friends)) throw new Error('friends is not an Array');
+  const billData = getBillData();
+  billData.friends = friends;
+  saveBillData(billData);
+}
+
+export function getTimestamp() {
+  return getBillData().timestamp;
+}
+
 export function saveTimestamp(timestamp) {
-  timestamp
-    ? localStorage.setItem('timestamp', timestamp)
-    : localStorage.removeItem('timestamp');
+  const billData = getBillData();
+  billData.timestamp = timestamp;
+  saveBillData(billData);
+}
+
+export function getTotalAmount() {
+  return getBillData().totalAmount;
+}
+
+export function saveTotalAmount(amount) {
+  const billData = getBillData();
+  billData.totalAmount = amount;
+  saveBillData(billData);
 }

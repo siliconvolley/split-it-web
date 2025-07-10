@@ -1,57 +1,71 @@
 import { createContext, useState, useRef } from 'react';
-
-import { calculateTotalAmount, getTimestamp } from '@/utils/BillUtils';
+import { getTimestamp } from '@/utils/BillUtils';
 import {
-  initializeBillTitle,
-  initializeBillItems,
-  saveBillTitle,
-  saveBillItems,
-  saveTimestamp,
+  getBillTitle,
+  getBillItems,
+  getBillData,
+  saveBillData,
+  initializeBillData,
 } from '@/utils/BillStorage';
 
 export const AddBillContext = createContext(null);
 
-export default function AddBillContextProvider({ children }) {
-  const [billTitle, setBillTitle] = useState(initializeBillTitle);
-  const [items, setItems] = useState(initializeBillItems);
-  const [itemName, setItemName] = useState('');
-  const [itemQuantity, setItemQuantity] = useState(1);
-  const [itemPrice, setItemPrice] = useState(0);
+const calculateTotalAmount = items =>
+  items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
 
+export default function AddBillContextProvider({ children }) {
+  const [billTitle, setBillTitle] = useState(getBillTitle);
+  const [items, setItems] = useState(getBillItems);
+  const [newItem, setNewItem] = useState({
+    name: '',
+    quantity: 1,
+    price: 0,
+  });
+
+  const itemNameInputRef = useRef(null);
   const timestamp = getTimestamp();
   const totalAmount = calculateTotalAmount(items);
-  const itemNameInputRef = useRef(null);
 
   const addItem = () => {
-    if (!itemName || !itemPrice) return;
+    if (!newItem.name || !newItem.price) return;
 
-    const newItem = {
-      name: itemName,
-      quantity: Number(itemQuantity) || 1,
-      price: Number(itemPrice),
+    const itemToAdd = {
+      name: newItem.name,
+      quantity: Number(newItem.quantity) || 1,
+      price: Number(newItem.price),
     };
 
     setItems(prevItems => {
-      const updatedItems = [...prevItems, newItem];
-      saveBillItems(updatedItems);
+      const updatedItems = [...prevItems, itemToAdd];
+      saveBillData({
+        ...getBillData(),
+        items: updatedItems,
+        totalAmount: calculateTotalAmount(updatedItems),
+      });
       return updatedItems;
     });
 
-    setItemName('');
-    setItemQuantity(1);
-    setItemPrice(0);
+    setNewItem({ name: '', quantity: 1, price: 0 });
+  };
+
+  const handleBillTitleChange = title => {
+    setBillTitle(title);
+    saveBillData({
+      ...getBillData(),
+      title,
+      timestamp,
+    });
   };
 
   const handleClearBillData = () => {
+    initializeBillData();
     setBillTitle('');
     setItems([]);
-    saveBillTitle('');
-    saveBillItems([]);
-    saveTimestamp('');
+    setNewItem({ name: '', quantity: 1, price: 0 });
   };
 
   const handleItemNameInputFocus = () => {
-    if (itemNameInputRef.current) itemNameInputRef.current.focus();
+    itemNameInputRef.current?.focus();
   };
 
   const checkIfBillExists = () => {
@@ -61,18 +75,28 @@ export default function AddBillContextProvider({ children }) {
     return true;
   };
 
+  const handleItemUpdate = (index, field, value) => {
+    setItems(prevItems => {
+      const updatedItems = prevItems.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      );
+      saveBillData({
+        ...getBillData(),
+        items: updatedItems,
+        totalAmount: calculateTotalAmount(updatedItems),
+      });
+      return updatedItems;
+    });
+  };
+
   const value = {
     // State
     billTitle,
-    setBillTitle,
+    setBillTitle: handleBillTitleChange,
     items,
     setItems,
-    itemName,
-    setItemName,
-    itemQuantity,
-    setItemQuantity,
-    itemPrice,
-    setItemPrice,
+    newItem,
+    setNewItem,
 
     // Computed values
     timestamp,
@@ -86,10 +110,7 @@ export default function AddBillContextProvider({ children }) {
     handleClearBillData,
     handleItemNameInputFocus,
     checkIfBillExists,
-
-    // Utils
-    saveBillTitle,
-    saveBillItems,
+    handleItemUpdate,
   };
 
   return (
