@@ -50,11 +50,11 @@ export default function BillEntryItemsList() {
             type="number"
             min="0"
             placeholder="Quantity"
-            value={item.quantity}
+            value={item.quantity || ''}
             className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
-            onChange={e =>
-              handleItemUpdate(index, 'quantity', Number(e.target.value))
-            }
+            onChange={e => {
+              handleItemUpdate(index, 'quantity', Number(e.target.value));
+            }}
           />
 
           <input
@@ -91,10 +91,10 @@ export default function BillEntryItemsList() {
           type="number"
           min="0"
           placeholder="Quantity"
-          value={newItem.quantity}
+          value={newItem.quantity || ''}
           className="bg-inherit w-full px-2 py-1 text-end remove-spinner-button"
           onChange={e => {
-            const value = e.target.value ? Number(e.target.value) : 1;
+            const value = e.target.value ? Number(e.target.value) : 0;
             setNewItem({ ...newItem, quantity: value });
           }}
         />

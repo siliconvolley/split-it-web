@@ -10,7 +10,12 @@ import {
 } from '@/utils/BillStorage';
 
 const calculateTotalAmount = items =>
-  items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+  items.reduce(
+    (sum, item) =>
+      sum +
+      item.price * (typeof item.quantity === 'number' ? item.quantity : 1),
+    0
+  );
 
 export default function AddBillContextProvider({ children }) {
   const [billTitle, setBillTitle] = useState(getBillTitle);
@@ -30,7 +35,7 @@ export default function AddBillContextProvider({ children }) {
 
     const itemToAdd = {
       name: newItem.name,
-      quantity: Number(newItem.quantity) || 1,
+      quantity: newItem.quantity || 1, // Default to 1 only when adding
       price: Number(newItem.price),
     };
 
@@ -76,9 +81,11 @@ export default function AddBillContextProvider({ children }) {
 
   const handleItemUpdate = (index, field, value) => {
     setItems(prevItems => {
-      const updatedItems = prevItems.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
-      );
+      const updatedItems = prevItems.map((item, i) => {
+        if (i !== index) return item;
+        return { ...item, [field]: value };
+      });
+
       saveBillData({
         ...getBillData(),
         items: updatedItems,
