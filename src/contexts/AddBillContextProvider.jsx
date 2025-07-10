@@ -1,5 +1,6 @@
-import { createContext, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { getTimestamp } from '@/utils/BillUtils';
+import { AddBillContext } from '@/contexts/AddBillContext';
 import {
   getBillTitle,
   getBillItems,
@@ -7,8 +8,6 @@ import {
   saveBillData,
   initializeBillData,
 } from '@/utils/BillStorage';
-
-export const AddBillContext = createContext(null);
 
 const calculateTotalAmount = items =>
   items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);

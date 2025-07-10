@@ -1,4 +1,4 @@
-import AddBillContextProvider from '@/contexts/add-bill-context';
+import AddBillContextProvider from '@/contexts/AddBillContextProvider';
 import BillEntryControls from './BillEntryControls';
 import BillEntryItemsList from './BillEntryItemsList';
 import DisplayBillTitle from './DisplayBillTitle';
