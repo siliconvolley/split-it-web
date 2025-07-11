@@ -4,21 +4,22 @@ import AddSharesPopover from './AddSharesPopover';
 import { useAddFriends } from '@/hooks/useAddFriends';
 
 export default function SharesList() {
-  const { addSharesPopover, setAddSharesPopover } = useAddFriends();
+  const { items, addSharesPopover, setAddSharesPopover } = useAddFriends();
 
   return (
     <section className="flexible-container mb-8">
       <h3 className="font-semibold text-lg leading-none">Bill details</h3>
       <ul className="my-4 flex flex-col gap-2">
         {/* Bill items */}
-        <li className="bg-neutral-50 p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out">
+        {items.map((item, index) => (
+        <li key={index} className="bg-neutral-50 p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out">
           <p className="flex justify-between items-baseline">
-            <span className="font-light leading-none">#1</span>
-            <span className="font-bold text-lg leading-none">x1</span>
+            <span className="font-light leading-none">#{index + 1}</span>
+            <span className="font-bold text-lg leading-none">x{item.quantity}</span>
           </p>
           <p className="flex justify-between items-baseline">
-            <span className="font-semibold text-lg">Chicken Salad</span>
-            <span className="font-bold">₹420.00</span>
+            <span className="font-semibold text-lg">{item.name}</span>
+            <span className="font-bold">₹ {item.price}</span>
           </p>
           <div className="dashed mt-2 mb-1" />
           <button
@@ -32,6 +33,7 @@ export default function SharesList() {
             <Plus color="white" size="24" />
           </button>
         </li>
+      ))}
       </ul>
 
       {/* Popover for adding friends to share the item*/}

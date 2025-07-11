@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { getTimestamp } from '@/utils/BillUtils';
-import { AddBillContext } from '@/contexts/AddBillContext';
+import { AddBillContext } from '@/contexts/AllContexts';
 import {
   getBillTitle,
   getBillItems,

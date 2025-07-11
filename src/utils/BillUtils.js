@@ -1,9 +1,10 @@
 export function calculateTotalAmount(billItems) {
   if (billItems.length === 0) return 0;
-  return billItems.reduce(
+  const total = billItems.reduce(
     (sum, item) => Number(sum) + Number(item.quantity) * Number(item.price),
     0
   );
+  return Math.round(total * 100) / 100;
 }
 
 export function getTimestamp() {

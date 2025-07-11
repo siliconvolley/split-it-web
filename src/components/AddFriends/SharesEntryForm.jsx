@@ -1,7 +1,7 @@
 import SharesEntryControls from './SharesEntryControls';
 import FriendsList from './FriendsList';
 import SharesList from './SharesList';
-import AddFriendsContextProvider from '@/contexts/add-friends-context';
+import AddFriendsContextProvider from '@/contexts/AddFriendsContextProvider';
 
 export default function SharesEntryForm() {
   return (

@@ -1,10 +1,12 @@
 import { Utensils } from 'lucide-react';
 
 import Button from '@/components/Button';
+import { getBillTitle, getBillTimestamp, getTotalAmount } from '@/utils/BillStorage';
 
 export default function SharesEntryControls() {
-  const billTitle = localStorage.getItem('billTitle');
-  const timestamp = localStorage.getItem('timestamp');
+  const billTitle = getBillTitle();
+  const timestamp = getBillTimestamp();
+  const totalAmount = getTotalAmount();
 
   return (
     <section className="flexible-container bg-neutral-50 grid grid-row-2 gap-4 p-3 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out sm:grid-flow-col">
@@ -26,7 +28,7 @@ export default function SharesEntryControls() {
         </div>
         <div className="text-right sm:text-left">
           <h2 className="font-semibold">Total:</h2>
-          <p className="text-lg font-bold text-nowrap">₹ 69420.00</p>
+          <p className="text-lg font-bold text-nowrap">₹ {totalAmount.toFixed(2)}</p>
         </div>
       </div>
       <div

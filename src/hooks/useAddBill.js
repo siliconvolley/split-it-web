@@ -1,4 +1,4 @@
-import { AddBillContext } from '@/contexts/AddBillContext';
+import { AddBillContext } from '@/contexts/AllContexts';
 import { useContext } from 'react';
 
 export function useAddBill() {

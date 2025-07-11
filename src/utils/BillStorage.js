@@ -57,7 +57,7 @@ export function saveBillFriends(friends) {
   saveBillData(billData);
 }
 
-export function getTimestamp() {
+export function getBillTimestamp() {
   return getBillData().timestamp;
 }
 
