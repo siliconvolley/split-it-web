@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { AddFriendsContext } from '@/contexts/AllContexts';
-import { getBillData, getBillFriends, getBillItems } from '@/utils/BillStorage';
+import {
+  getBillData,
+  getBillFriends,
+  getBillItems,
+  toggleCustomShares,
+  getItemShares,
+  updateItemShares,
+} from '@/utils/BillStorage';
 
 export default function AddFriendsContextProvider({ children }) {
   const [addFriendPopover, setAddFriendPopover] = useState(false);
@@ -11,6 +18,9 @@ export default function AddFriendsContextProvider({ children }) {
     name: '',
     share: 0,
   });
+  const [selectedItemData, setSelectedItemData] = useState(null);
+  const [isCustomShares, setIsCustomShares] = useState(false);
+  const [selectedItemFriends, setSelectedItemFriends] = useState([]);
 
   const addFriend = () => {
     if (!newFriend.name || newFriend.share <= 0) return;
@@ -59,6 +69,220 @@ export default function AddFriendsContextProvider({ children }) {
     return true;
   };
 
+  const getSelectedItemData = itemIndex => {
+    if (itemIndex < 0 || itemIndex >= items.length) return null;
+    const item = items[itemIndex];
+    setSelectedItemData(item);
+    // Set the current custom shares state for this item
+    setIsCustomShares(item.hasCustomShares || false);
+
+    // Initialize selected item friends from shares
+    const itemShares = item.shares || {};
+    const itemFriends = Object.entries(itemShares)
+      .filter(([, share]) => share > 0)
+      .map(([friendName, share]) => ({
+        name: friendName,
+        share: share,
+      }));
+    setSelectedItemFriends(itemFriends);
+  };
+
+  const addFriendToSelectedItem = friendName => {
+    if (!selectedItemData || !friendName) return;
+
+    // Check if friend is already added
+    const isAlreadyAdded = selectedItemFriends.some(f => f.name === friendName);
+    if (isAlreadyAdded) return;
+
+    const newFriends = [...selectedItemFriends, { name: friendName, share: 0 }];
+
+    // Calculate equal shares
+    const equalShare = selectedItemData.quantity / newFriends.length;
+    const updatedFriends = newFriends.map(f => ({
+      ...f,
+      share: isCustomShares ? f.share : equalShare,
+    }));
+
+    setSelectedItemFriends(updatedFriends);
+
+    // Update shares in storage
+    const newShares = {};
+    updatedFriends.forEach(f => {
+      newShares[f.name] = f.share;
+    });
+    updateCurrentItemShares(newShares);
+  };
+
+  const removeFriendFromSelectedItem = friendName => {
+    if (!selectedItemData) return;
+
+    const updatedFriends = selectedItemFriends.filter(
+      f => f.name !== friendName
+    );
+
+    // Recalculate equal shares if not custom
+    if (!isCustomShares && updatedFriends.length > 0) {
+      const equalShare = selectedItemData.quantity / updatedFriends.length;
+      updatedFriends.forEach(f => {
+        f.share = equalShare;
+      });
+    }
+
+    setSelectedItemFriends(updatedFriends);
+
+    // Update shares in storage
+    const newShares = {};
+    updatedFriends.forEach(f => {
+      newShares[f.name] = f.share;
+    });
+    updateCurrentItemShares(newShares);
+  };
+
+  const updateFriendShareInSelectedItem = (friendName, newShare) => {
+    if (!isCustomShares) return; // Only allow editing in custom mode
+
+    const updatedFriends = selectedItemFriends.map(f =>
+      f.name === friendName ? { ...f, share: parseFloat(newShare) || 0 } : f
+    );
+
+    setSelectedItemFriends(updatedFriends);
+
+    // Update shares in storage
+    const newShares = {};
+    updatedFriends.forEach(f => {
+      newShares[f.name] = f.share;
+    });
+    updateCurrentItemShares(newShares);
+  };
+
+  const getRemainingQuantity = () => {
+    if (!selectedItemData) return 0;
+
+    const totalAllocated = selectedItemFriends.reduce(
+      (sum, f) => sum + f.share,
+      0
+    );
+    return selectedItemData.quantity - totalAllocated;
+  };
+
+  const getAvailableFriendsToAdd = () => {
+    const addedFriendNames = selectedItemFriends.map(f => f.name);
+    return friends.filter(f => !addedFriendNames.includes(f.name));
+  };
+
+  const saveSelectedItemShares = () => {
+    if (!selectedItemData) return false;
+
+    // Validate shares in custom mode
+    if (isCustomShares) {
+      const remainingQty = getRemainingQuantity();
+      if (Math.abs(remainingQty) > 0.01) {
+        // Shares don't add up to total quantity
+        return false;
+      }
+    }
+
+    // All shares are already saved in real-time via updateCurrentItemShares
+    // This function just validates and confirms the save operation
+    return true;
+  };
+
+  const handleToggleCustomShares = () => {
+    if (!selectedItemData) return;
+
+    // Find the item index
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return;
+
+    const newCustomSharesState = !isCustomShares;
+
+    // Update the toggle state in BillStorage
+    toggleCustomShares(itemIndex, newCustomSharesState);
+
+    // Update local state
+    setIsCustomShares(newCustomSharesState);
+
+    // Recalculate shares based on mode
+    if (!newCustomSharesState && selectedItemFriends.length > 0) {
+      // Equal shares mode - recalculate equal distribution
+      const equalShare = selectedItemData.quantity / selectedItemFriends.length;
+      const updatedFriends = selectedItemFriends.map(f => ({
+        ...f,
+        share: equalShare,
+      }));
+      setSelectedItemFriends(updatedFriends);
+
+      const newShares = {};
+      updatedFriends.forEach(f => {
+        newShares[f.name] = f.share;
+      });
+      updateCurrentItemShares(newShares);
+    }
+
+    // Update the items state to reflect the change
+    setItems(prevItems => {
+      const updatedItems = [...prevItems];
+      updatedItems[itemIndex] = {
+        ...updatedItems[itemIndex],
+        hasCustomShares: newCustomSharesState,
+      };
+      return updatedItems;
+    });
+
+    // Update selectedItemData to reflect the change
+    setSelectedItemData(prev => ({
+      ...prev,
+      hasCustomShares: newCustomSharesState,
+    }));
+  };
+
+  const getCurrentItemShares = () => {
+    if (!selectedItemData) return {};
+
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return {};
+
+    return getItemShares(itemIndex);
+  };
+
+  const updateCurrentItemShares = newShares => {
+    if (!selectedItemData) return;
+
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return;
+
+    // Update shares in BillStorage
+    updateItemShares(itemIndex, newShares);
+
+    // Update local items state
+    setItems(prevItems => {
+      const updatedItems = [...prevItems];
+      updatedItems[itemIndex] = {
+        ...updatedItems[itemIndex],
+        shares: newShares,
+      };
+      return updatedItems;
+    });
+  };
+
   const value = {
     addFriendPopover,
     setAddFriendPopover,
@@ -72,6 +296,20 @@ export default function AddFriendsContextProvider({ children }) {
     removeFriend,
     friends,
     checkIfFriendsExist,
+    selectedItemData,
+    getSelectedItemData,
+    isCustomShares,
+    setIsCustomShares,
+    handleToggleCustomShares,
+    getCurrentItemShares,
+    updateCurrentItemShares,
+    selectedItemFriends,
+    addFriendToSelectedItem,
+    removeFriendFromSelectedItem,
+    updateFriendShareInSelectedItem,
+    getRemainingQuantity,
+    getAvailableFriendsToAdd,
+    saveSelectedItemShares,
   };
 
   return (

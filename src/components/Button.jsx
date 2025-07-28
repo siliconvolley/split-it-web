@@ -19,16 +19,24 @@ export default function Button({
   onClick,
   disabled,
 }) {
-  const buttonClasses = `py-3 px-4 rounded-lg font-bold text-center transition-colors duration-150 ease-in-out 
-    ${className} 
-    ${getButtonType(type)}
-    ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
-  `;
+  const handleDragStart = e => {
+    e.preventDefault();
+  };
 
-  return disabled ? (
-    <div className={buttonClasses}>{children}</div>
-  ) : (
-    <Link to={path} className={buttonClasses} onClick={onClick}>
+  return (
+    <Link
+      to={path}
+      draggable="false"
+      onDragStart={handleDragStart}
+      className={`py-3 px-4 rounded-lg font-bold text-center select-none
+        transition-all duration-150 ease-in-out
+        active:scale-95 active:duration-25
+        ${disabled ? 'pointer-events-none opacity-50' : ''}
+        ${className} 
+        ${getButtonType(type)}
+      `}
+      onClick={onClick}
+    >
       {children}
     </Link>
   );

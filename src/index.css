@@ -13,6 +13,10 @@ textarea:focus, input:focus, input[type]:focus {
   outline-offset: -2px;
 }
 
+input[type="radio"]:focus {
+  outline: none;
+}
+
 .inner-border {
   box-shadow: inset 0 0 0 2px #262626;
 }
