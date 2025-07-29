@@ -101,6 +101,14 @@ export function saveTotalAmount(amount) {
 
 // Item shares management functions
 export function updateItemShares(itemIndex, shares) {
+  if (
+    itemIndex < 0 ||
+    !Number.isInteger(itemIndex) ||
+    !shares ||
+    typeof shares !== 'object'
+  )
+    return;
+
   const billData = getBillData();
   if (billData.items[itemIndex]) {
     billData.items[itemIndex].shares = shares;
@@ -109,6 +117,13 @@ export function updateItemShares(itemIndex, shares) {
 }
 
 export function toggleCustomShares(itemIndex, hasCustomShares) {
+  if (
+    itemIndex < 0 ||
+    !Number.isInteger(itemIndex) ||
+    typeof hasCustomShares !== 'boolean'
+  )
+    return;
+
   const billData = getBillData();
   if (billData.items[itemIndex]) {
     billData.items[itemIndex].hasCustomShares = hasCustomShares;
@@ -118,10 +133,12 @@ export function toggleCustomShares(itemIndex, hasCustomShares) {
       const itemFriends = getItemFriends(itemIndex);
       const item = billData.items[itemIndex];
       const initialShares = {};
-      if (itemFriends.length > 0) {
+      if (itemFriends.length > 0 && item.quantity > 0) {
         const sharePerPerson = item.quantity / itemFriends.length;
         itemFriends.forEach(friendName => {
-          initialShares[friendName] = sharePerPerson; // Equal distribution of total quantity
+          if (friendName && typeof friendName === 'string') {
+            initialShares[friendName] = sharePerPerson; // Equal distribution of total quantity
+          }
         });
       }
       billData.items[itemIndex].shares = initialShares;
@@ -132,6 +149,8 @@ export function toggleCustomShares(itemIndex, hasCustomShares) {
 }
 
 export function getItemShares(itemIndex) {
+  if (itemIndex < 0 || !Number.isInteger(itemIndex)) return {};
+
   const billData = getBillData();
   return billData.items[itemIndex]?.shares || {};
 }
@@ -185,36 +204,53 @@ export function getItemCostPerPerson(itemIndex) {
 
 // Friend item management functions
 export function addFriendToItem(friendName, itemIndex) {
+  if (!friendName || typeof friendName !== 'string' || itemIndex < 0) return;
+
   const billData = getBillData();
   const friend = billData.friends.find(f => f.name === friendName);
 
-  if (friend && !friend.share.includes(itemIndex)) {
+  if (
+    friend &&
+    Array.isArray(friend.share) &&
+    !friend.share.includes(itemIndex)
+  ) {
     friend.share.push(itemIndex);
     saveBillData(billData);
   }
 }
 
 export function removeFriendFromItem(friendName, itemIndex) {
+  if (!friendName || typeof friendName !== 'string' || itemIndex < 0) return;
+
   const billData = getBillData();
   const friend = billData.friends.find(f => f.name === friendName);
 
-  if (friend) {
+  if (friend && Array.isArray(friend.share)) {
     friend.share = friend.share.filter(index => index !== itemIndex);
     saveBillData(billData);
   }
 }
 
 export function getFriendItems(friendName) {
+  if (!friendName || typeof friendName !== 'string') return [];
+
   const billData = getBillData();
   const friend = billData.friends.find(f => f.name === friendName);
 
-  return friend ? friend.share : [];
+  return friend && Array.isArray(friend.share) ? friend.share : [];
 }
 
 export function getItemFriends(itemIndex) {
+  if (itemIndex < 0 || !Number.isInteger(itemIndex)) return [];
+
   const billData = getBillData();
 
   return billData.friends
-    .filter(friend => friend.share.includes(itemIndex))
+    .filter(
+      friend =>
+        friend &&
+        Array.isArray(friend.share) &&
+        friend.share.includes(itemIndex)
+    )
     .map(friend => friend.name);
 }

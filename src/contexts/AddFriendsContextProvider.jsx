@@ -26,10 +26,11 @@ export default function AddFriendsContextProvider({ children }) {
   const [selectedItemFriends, setSelectedItemFriends] = useState([]);
 
   const addFriend = () => {
-    if (!newFriend.name) return;
+    if (!newFriend.name || !newFriend.name.trim()) return;
 
+    const trimmedName = newFriend.name.trim();
     const isDuplicate = friends.some(
-      friend => friend.name.toLowerCase() === newFriend.name.toLowerCase()
+      friend => friend.name.toLowerCase() === trimmedName.toLowerCase()
     );
 
     if (isDuplicate) {
@@ -38,7 +39,7 @@ export default function AddFriendsContextProvider({ children }) {
     }
 
     const friendToAdd = {
-      name: newFriend.name.trim(),
+      name: trimmedName,
       share: [], // Initialize with empty array of item indices
     };
 
@@ -56,11 +57,29 @@ export default function AddFriendsContextProvider({ children }) {
   const removeFriend = index => {
     if (index < 0 || index >= friends.length) return;
 
+    const friendToRemove = friends[index];
+    if (!friendToRemove) return;
+
     setFriends(prevFriends => {
       const updatedFriends = prevFriends.filter((_, i) => i !== index);
+
+      // Remove this friend from all items in storage
       const billData = getBillData();
+      billData.items = billData.items.map(item => {
+        const updatedShares = { ...item.shares };
+        delete updatedShares[friendToRemove.name];
+        return {
+          ...item,
+          shares: updatedShares,
+        };
+      });
+
       billData.friends = updatedFriends;
       localStorage.setItem('billData', JSON.stringify(billData));
+
+      // Update local items state to reflect the changes
+      setItems(billData.items);
+
       return updatedFriends;
     });
   };
@@ -75,6 +94,8 @@ export default function AddFriendsContextProvider({ children }) {
   const getSelectedItemData = itemIndex => {
     if (itemIndex < 0 || itemIndex >= items.length) return null;
     const item = items[itemIndex];
+    if (!item) return null;
+
     setSelectedItemData(item);
     // Set the current custom shares state for this item
     setIsCustomShares(item.hasCustomShares || false);
@@ -92,20 +113,14 @@ export default function AddFriendsContextProvider({ children }) {
   };
 
   const addFriendToSelectedItem = friendName => {
-    if (!selectedItemData || !friendName) return;
+    if (!selectedItemData || !isValidFriendName(friendName)) return;
 
     // Check if friend is already added
     const isAlreadyAdded = selectedItemFriends.some(f => f.name === friendName);
     if (isAlreadyAdded) return;
 
-    // Find the item index
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    // Find the item index using utility function
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return;
 
     // Add friend to this item in the new structure
@@ -113,7 +128,9 @@ export default function AddFriendsContextProvider({ children }) {
 
     const newFriends = [...selectedItemFriends, { name: friendName, share: 0 }];
 
-    // Calculate equal shares
+    // Calculate equal shares with validation
+    if (newFriends.length === 0) return;
+
     const equalShare = selectedItemData.quantity / newFriends.length;
     const updatedFriends = newFriends.map(f => ({
       ...f,
@@ -131,16 +148,10 @@ export default function AddFriendsContextProvider({ children }) {
   };
 
   const removeFriendFromSelectedItem = friendName => {
-    if (!selectedItemData) return;
+    if (!selectedItemData || !isValidFriendName(friendName)) return;
 
-    // Find the item index
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    // Find the item index using utility function
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return;
 
     // Remove friend from this item in the new structure
@@ -150,7 +161,7 @@ export default function AddFriendsContextProvider({ children }) {
       f => f.name !== friendName
     );
 
-    // Recalculate equal shares if not custom
+    // Recalculate equal shares if not custom and there are remaining friends
     if (!isCustomShares && updatedFriends.length > 0) {
       const equalShare = selectedItemData.quantity / updatedFriends.length;
       updatedFriends.forEach(f => {
@@ -169,10 +180,15 @@ export default function AddFriendsContextProvider({ children }) {
   };
 
   const updateFriendShareInSelectedItem = (friendName, newShare) => {
-    if (!isCustomShares) return; // Only allow editing in custom mode
+    if (!isCustomShares || !selectedItemData || !isValidFriendName(friendName))
+      return;
 
+    // Validate and parse the new share value using utility function
+    if (!isValidShareValue(newShare)) return;
+
+    const parsedShare = parseFloat(newShare);
     const updatedFriends = selectedItemFriends.map(f =>
-      f.name === friendName ? { ...f, share: parseFloat(newShare) || 0 } : f
+      f.name === friendName ? { ...f, share: parsedShare } : f
     );
 
     setSelectedItemFriends(updatedFriends);
@@ -186,34 +202,34 @@ export default function AddFriendsContextProvider({ children }) {
   };
 
   const getRemainingQuantity = () => {
-    if (!selectedItemData) return 0;
+    if (!selectedItemData || selectedItemData.quantity <= 0) return 0;
 
-    const totalAllocated = selectedItemFriends.reduce(
-      (sum, f) => sum + f.share,
-      0
-    );
+    const totalAllocated = selectedItemFriends.reduce((sum, f) => {
+      const shareValue = parseFloat(f.share) || 0;
+      return sum + shareValue;
+    }, 0);
     return selectedItemData.quantity - totalAllocated;
   };
 
   const getAvailableFriendsToAdd = () => {
-    if (!selectedItemData) return friends;
+    if (!selectedItemData || !Array.isArray(friends)) return [];
 
-    // Find the item index
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    // Find the item index using utility function
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return friends;
 
     // Get friends who are NOT currently sharing this item
-    return friends.filter(friend => !friend.share.includes(itemIndex));
+    return friends.filter(
+      friend =>
+        friend &&
+        friend.share &&
+        Array.isArray(friend.share) &&
+        !friend.share.includes(itemIndex)
+    );
   };
 
   const saveSelectedItemShares = () => {
-    if (!selectedItemData) return false;
+    if (!selectedItemData || !Array.isArray(selectedItemFriends)) return false;
 
     // Validate shares in custom mode
     if (isCustomShares) {
@@ -222,6 +238,22 @@ export default function AddFriendsContextProvider({ children }) {
         // Shares don't add up to total quantity
         return false;
       }
+
+      // Check for negative shares
+      const hasNegativeShares = selectedItemFriends.some(
+        f => (parseFloat(f.share) || 0) < 0
+      );
+      if (hasNegativeShares) {
+        return false;
+      }
+    }
+
+    // Validate that all friends have valid shares
+    const hasInvalidShares = selectedItemFriends.some(
+      f => !f.name || isNaN(parseFloat(f.share))
+    );
+    if (hasInvalidShares) {
+      return false;
     }
 
     // All shares are already saved in real-time via updateCurrentItemShares
@@ -232,14 +264,8 @@ export default function AddFriendsContextProvider({ children }) {
   const handleToggleCustomShares = () => {
     if (!selectedItemData) return;
 
-    // Find the item index
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    // Find the item index using utility function
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return;
 
     const newCustomSharesState = !isCustomShares;
@@ -270,45 +296,40 @@ export default function AddFriendsContextProvider({ children }) {
     // Update the items state to reflect the change
     setItems(prevItems => {
       const updatedItems = [...prevItems];
-      updatedItems[itemIndex] = {
-        ...updatedItems[itemIndex],
-        hasCustomShares: newCustomSharesState,
-      };
+      if (updatedItems[itemIndex]) {
+        updatedItems[itemIndex] = {
+          ...updatedItems[itemIndex],
+          hasCustomShares: newCustomSharesState,
+        };
+      }
       return updatedItems;
     });
 
     // Update selectedItemData to reflect the change
-    setSelectedItemData(prev => ({
-      ...prev,
-      hasCustomShares: newCustomSharesState,
-    }));
+    setSelectedItemData(prev =>
+      prev
+        ? {
+            ...prev,
+            hasCustomShares: newCustomSharesState,
+          }
+        : null
+    );
   };
 
   const getCurrentItemShares = () => {
     if (!selectedItemData) return {};
 
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return {};
 
     return getItemShares(itemIndex);
   };
 
   const updateCurrentItemShares = newShares => {
-    if (!selectedItemData) return;
+    if (!selectedItemData || !newShares || typeof newShares !== 'object')
+      return;
 
-    const itemIndex = items.findIndex(
-      item =>
-        item.name === selectedItemData.name &&
-        item.quantity === selectedItemData.quantity &&
-        item.price === selectedItemData.price
-    );
-
+    const itemIndex = findItemIndex(selectedItemData);
     if (itemIndex === -1) return;
 
     // Update shares in BillStorage
@@ -317,12 +338,40 @@ export default function AddFriendsContextProvider({ children }) {
     // Update local items state
     setItems(prevItems => {
       const updatedItems = [...prevItems];
-      updatedItems[itemIndex] = {
-        ...updatedItems[itemIndex],
-        shares: newShares,
-      };
+      if (updatedItems[itemIndex]) {
+        updatedItems[itemIndex] = {
+          ...updatedItems[itemIndex],
+          shares: newShares,
+        };
+      }
       return updatedItems;
     });
+  };
+
+  // Utility function to find item index more reliably
+  const findItemIndex = targetItem => {
+    if (!targetItem || !Array.isArray(items)) return -1;
+
+    return items.findIndex(item => {
+      return (
+        item === targetItem ||
+        (item &&
+          item.name === targetItem.name &&
+          item.quantity === targetItem.quantity &&
+          item.price === targetItem.price)
+      );
+    });
+  };
+
+  // Utility function to validate friend name
+  const isValidFriendName = name => {
+    return name && typeof name === 'string' && name.trim().length > 0;
+  };
+
+  // Utility function to validate share value
+  const isValidShareValue = value => {
+    const numValue = parseFloat(value);
+    return !isNaN(numValue) && numValue >= 0;
   };
 
   const value = {
