@@ -42,17 +42,19 @@ export function getBillItems() {
 export function saveBillItems(items) {
   if (!Array.isArray(items)) throw new Error('items is not an Array');
   const billData = getBillData();
-  const friends = billData.friends;
 
   // Ensure each item has the proper shares structure
-  const itemsWithShares = items.map(item => {
+  const itemsWithShares = items.map((item, itemIndex) => {
     if (!item.hasCustomShares && !item.shares) {
-      // Initialize with equal shares for all friends
+      // Initialize with equal shares for friends assigned to this item
+      const itemFriends = getItemFriends(itemIndex);
       const shares = {};
-      const sharePerPerson = item.quantity / friends.length;
-      friends.forEach(friend => {
-        shares[friend.name] = sharePerPerson;
-      });
+      if (itemFriends.length > 0) {
+        const sharePerPerson = item.quantity / itemFriends.length;
+        itemFriends.forEach(friendName => {
+          shares[friendName] = sharePerPerson;
+        });
+      }
       return {
         ...item,
         hasCustomShares: false,
@@ -113,13 +115,15 @@ export function toggleCustomShares(itemIndex, hasCustomShares) {
 
     // Initialize shares object if enabling custom shares
     if (hasCustomShares && !billData.items[itemIndex].shares) {
-      const friends = billData.friends;
+      const itemFriends = getItemFriends(itemIndex);
       const item = billData.items[itemIndex];
       const initialShares = {};
-      const sharePerPerson = item.quantity / friends.length;
-      friends.forEach(friend => {
-        initialShares[friend.name] = sharePerPerson; // Equal distribution of total quantity
-      });
+      if (itemFriends.length > 0) {
+        const sharePerPerson = item.quantity / itemFriends.length;
+        itemFriends.forEach(friendName => {
+          initialShares[friendName] = sharePerPerson; // Equal distribution of total quantity
+        });
+      }
       billData.items[itemIndex].shares = initialShares;
     }
 
@@ -132,15 +136,21 @@ export function getItemShares(itemIndex) {
   return billData.items[itemIndex]?.shares || {};
 }
 
-export function initializeItemWithShares(item, friends) {
-  const sharePerPerson = item.quantity / friends.length;
+export function initializeItemWithShares(item, itemIndex) {
+  const itemFriends = getItemFriends(itemIndex);
+  const shares = {};
+
+  if (itemFriends.length > 0) {
+    const sharePerPerson = item.quantity / itemFriends.length;
+    itemFriends.forEach(friendName => {
+      shares[friendName] = sharePerPerson; // Equal distribution of total quantity
+    });
+  }
+
   return {
     ...item,
     hasCustomShares: false,
-    shares: friends.reduce((acc, friend) => {
-      acc[friend.name] = sharePerPerson; // Equal distribution of total quantity
-      return acc;
-    }, {}),
+    shares: shares,
   };
 }
 
@@ -171,4 +181,40 @@ export function getItemCostPerPerson(itemIndex) {
   });
 
   return costPerPerson;
+}
+
+// Friend item management functions
+export function addFriendToItem(friendName, itemIndex) {
+  const billData = getBillData();
+  const friend = billData.friends.find(f => f.name === friendName);
+
+  if (friend && !friend.share.includes(itemIndex)) {
+    friend.share.push(itemIndex);
+    saveBillData(billData);
+  }
+}
+
+export function removeFriendFromItem(friendName, itemIndex) {
+  const billData = getBillData();
+  const friend = billData.friends.find(f => f.name === friendName);
+
+  if (friend) {
+    friend.share = friend.share.filter(index => index !== itemIndex);
+    saveBillData(billData);
+  }
+}
+
+export function getFriendItems(friendName) {
+  const billData = getBillData();
+  const friend = billData.friends.find(f => f.name === friendName);
+
+  return friend ? friend.share : [];
+}
+
+export function getItemFriends(itemIndex) {
+  const billData = getBillData();
+
+  return billData.friends
+    .filter(friend => friend.share.includes(itemIndex))
+    .map(friend => friend.name);
 }

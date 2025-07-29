@@ -7,6 +7,9 @@ import {
   toggleCustomShares,
   getItemShares,
   updateItemShares,
+  addFriendToItem,
+  removeFriendFromItem,
+  getItemFriends,
 } from '@/utils/BillStorage';
 
 export default function AddFriendsContextProvider({ children }) {
@@ -23,7 +26,7 @@ export default function AddFriendsContextProvider({ children }) {
   const [selectedItemFriends, setSelectedItemFriends] = useState([]);
 
   const addFriend = () => {
-    if (!newFriend.name || newFriend.share <= 0) return;
+    if (!newFriend.name) return;
 
     const isDuplicate = friends.some(
       friend => friend.name.toLowerCase() === newFriend.name.toLowerCase()
@@ -36,7 +39,7 @@ export default function AddFriendsContextProvider({ children }) {
 
     const friendToAdd = {
       name: newFriend.name.trim(),
-      share: Number(newFriend.share),
+      share: [], // Initialize with empty array of item indices
     };
 
     setFriends(prevFriends => {
@@ -76,14 +79,15 @@ export default function AddFriendsContextProvider({ children }) {
     // Set the current custom shares state for this item
     setIsCustomShares(item.hasCustomShares || false);
 
-    // Initialize selected item friends from shares
+    // Get friends who are sharing this item using the new structure
+    const itemFriendNames = getItemFriends(itemIndex);
     const itemShares = item.shares || {};
-    const itemFriends = Object.entries(itemShares)
-      .filter(([, share]) => share > 0)
-      .map(([friendName, share]) => ({
-        name: friendName,
-        share: share,
-      }));
+
+    const itemFriends = itemFriendNames.map(friendName => ({
+      name: friendName,
+      share: itemShares[friendName] || 0,
+    }));
+
     setSelectedItemFriends(itemFriends);
   };
 
@@ -93,6 +97,19 @@ export default function AddFriendsContextProvider({ children }) {
     // Check if friend is already added
     const isAlreadyAdded = selectedItemFriends.some(f => f.name === friendName);
     if (isAlreadyAdded) return;
+
+    // Find the item index
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return;
+
+    // Add friend to this item in the new structure
+    addFriendToItem(friendName, itemIndex);
 
     const newFriends = [...selectedItemFriends, { name: friendName, share: 0 }];
 
@@ -115,6 +132,19 @@ export default function AddFriendsContextProvider({ children }) {
 
   const removeFriendFromSelectedItem = friendName => {
     if (!selectedItemData) return;
+
+    // Find the item index
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return;
+
+    // Remove friend from this item in the new structure
+    removeFriendFromItem(friendName, itemIndex);
 
     const updatedFriends = selectedItemFriends.filter(
       f => f.name !== friendName
@@ -166,8 +196,20 @@ export default function AddFriendsContextProvider({ children }) {
   };
 
   const getAvailableFriendsToAdd = () => {
-    const addedFriendNames = selectedItemFriends.map(f => f.name);
-    return friends.filter(f => !addedFriendNames.includes(f.name));
+    if (!selectedItemData) return friends;
+
+    // Find the item index
+    const itemIndex = items.findIndex(
+      item =>
+        item.name === selectedItemData.name &&
+        item.quantity === selectedItemData.quantity &&
+        item.price === selectedItemData.price
+    );
+
+    if (itemIndex === -1) return friends;
+
+    // Get friends who are NOT currently sharing this item
+    return friends.filter(friend => !friend.share.includes(itemIndex));
   };
 
   const saveSelectedItemShares = () => {
