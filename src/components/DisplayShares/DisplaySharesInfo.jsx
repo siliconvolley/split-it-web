@@ -8,7 +8,7 @@ export default function DisplaySharesInfo() {
     <DisplaySharesContextProvider>
       <main
         id="screenshot"
-        className="bg-red-500 place-items-center py-4 px-8 -mx-5"
+        className="place-items-center py-4 px-8 -mx-5"
       >
         <BillDetails />
         <IndividualShares />
