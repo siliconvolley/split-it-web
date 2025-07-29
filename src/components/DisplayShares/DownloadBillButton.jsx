@@ -5,10 +5,7 @@ export default function DownloadBillButton() {
   const { downloadBill } = useDisplayShares();
 
   return (
-    <Button
-      className="w-[15rem] text-center bg-neutral-800 hover:bg-neutral-700 transition-colors duration-150 ease-in-out text-white font-bold py-3 px-4 my-4 rounded-lg grid place-items-center"
-      onClick={downloadBill}
-    >
+    <Button className="w-[15rem] z-10 fixed bottom-16 left-1/2 transform -translate-x-1/2" onClick={downloadBill}>
       Download Bill
     </Button>
   );

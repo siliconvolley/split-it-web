@@ -12,11 +12,17 @@ export default function DisplaySharesContextProvider({ children }) {
         scale: 2,
         useCORS: true,
         logging: true,
+        backgroundColor: '#ffffff',
+        allowTaint: true,
       })
         .then(canvas => {
           // Replace spaces with underscores and remove commas
-          const formattedTimestamp = billData.timestamp.replace(/\s+/g, '_').replace(/,/g, '');
-          const formattedTitle = billData.title.replace(/\s+/g, '_').replace(/,/g, '');
+          const formattedTimestamp = billData.timestamp
+            .replace(/\s+/g, '_')
+            .replace(/,/g, '');
+          const formattedTitle = billData.title
+            .replace(/\s+/g, '_')
+            .replace(/,/g, '');
 
           const link = document.createElement('a');
           link.href = canvas.toDataURL('image/png');
@@ -29,12 +35,12 @@ export default function DisplaySharesContextProvider({ children }) {
     } else {
       console.error("Element with ID 'screenshot' not found.");
     }
-  }
+  };
 
   const value = {
     billData,
     downloadBill,
-  }
+  };
 
   return (
     <DisplaySharesContext.Provider value={value}>

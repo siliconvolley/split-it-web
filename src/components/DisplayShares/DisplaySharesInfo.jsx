@@ -6,7 +6,10 @@ import DisplaySharesContextProvider from '@/contexts/DisplaySharesContextProvide
 export default function DisplaySharesInfo() {
   return (
     <DisplaySharesContextProvider>
-      <main id="screenshot" className="place-items-center px-2 py-4">
+      <main
+        id="screenshot"
+        className="place-items-center py-4 px-8 w-screen -mx-5"
+      >
         <BillDetails />
         <IndividualShares />
       </main>
