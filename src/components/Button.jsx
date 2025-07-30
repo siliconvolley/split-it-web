@@ -28,7 +28,7 @@ export default function Button({
       to={path}
       draggable="false"
       onDragStart={handleDragStart}
-      className={`py-3 px-4 rounded-lg font-bold text-center select-none
+      className={`grid place-items-center py-3 px-4 rounded-lg font-bold select-none
         transition-all duration-150 ease-in-out
         active:scale-95 active:duration-25
         ${disabled ? 'pointer-events-none opacity-50' : ''}

@@ -16,11 +16,8 @@ export default function SharesEntryControls() {
   const { checkIfFriendsExist } = useAddFriends();
 
   return (
-    <section className="flexible-container bg-neutral-50 grid grid-row-2 gap-4 p-3 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out sm:grid-flow-col">
-      <div
-        id="bill-details-wrapper"
-        className="flex justify-between sm:flex-col sm:space-x-0 "
-      >
+    <section className="flexible-container bg-neutral-50 grid grid-row-2 gap-4 p-3 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 ease-in-out">
+      <div id="bill-details-wrapper" className="flex justify-between">
         <div className="flex items-center">
           <div
             id="icon-container"
@@ -33,33 +30,20 @@ export default function SharesEntryControls() {
             <p className="text-sm font-normal">{timestamp}</p>
           </div>
         </div>
-        <div className="text-right sm:text-left">
+        <div className="text-right">
           <h2 className="font-semibold">Total:</h2>
           <p className="text-lg font-bold text-nowrap">
             ₹ {totalAmount.toFixed(2)}
           </p>
         </div>
       </div>
-      <div
-        id="buttons-wrapper"
-        className="flex justify-between space-x-3 sm:flex-col sm:space-x-0 sm:space-y-4"
+      <Button
+        path="/bill/shares"
+        className="w-full max-w-[20rem] mx-auto"
+        disabled={!checkIfFriendsExist()}
       >
-        <Button
-          type="secondary"
-          path="/bill/shares"
-          className="w-full"
-          disabled={!checkIfFriendsExist()}
-        >
-          Split Evenly
-        </Button>
-        <Button
-          path="/bill/shares"
-          className="w-full"
-          disabled={!checkIfFriendsExist()}
-        >
-          Split
-        </Button>
-      </div>
+        Split
+      </Button>
     </section>
   );
 }
