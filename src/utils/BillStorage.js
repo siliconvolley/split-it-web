@@ -5,6 +5,14 @@ const initialBillData = {
   totalAmount: 0,
   friends: [],
   items: [],
+  gst: {
+    enabled: false,
+    percentage: 0,
+  },
+  discount: {
+    enabled: false,
+    percentage: 0,
+  },
 };
 
 // Initialize Bill Data
@@ -96,6 +104,34 @@ export function getTotalAmount() {
 export function saveTotalAmount(amount) {
   const billData = getBillData();
   billData.totalAmount = amount;
+  saveBillData(billData);
+}
+
+// GST management functions
+export function getGstData() {
+  return getBillData().gst || { enabled: false, percentage: 0 };
+}
+
+export function saveGstData(enabled, percentage = 0) {
+  const billData = getBillData();
+  billData.gst = {
+    enabled: Boolean(enabled),
+    percentage: enabled ? Number(percentage) : 0,
+  };
+  saveBillData(billData);
+}
+
+// Discount management functions
+export function getDiscountData() {
+  return getBillData().discount || { enabled: false, percentage: 0 };
+}
+
+export function saveDiscountData(enabled, percentage = 0) {
+  const billData = getBillData();
+  billData.discount = {
+    enabled: Boolean(enabled),
+    percentage: enabled ? Number(percentage) : 0,
+  };
   saveBillData(billData);
 }
 

@@ -8,7 +8,15 @@ export default function BillEntryItemsList() {
     itemNameInputRef,
     addItem,
     handleItemNameInputFocus,
-    handleItemUpdate
+    handleItemUpdate,
+    isGstEnabled,
+    gstValue,
+    isDiscountEnabled,
+    discountValue,
+    handleGstToggle,
+    handleDiscountToggle,
+    handleGstValueChange,
+    handleDiscountValueChange,
   } = useAddBill();
 
   return (
@@ -116,6 +124,72 @@ export default function BillEntryItemsList() {
             }
           }}
         />
+      </div>
+
+      <div className="grid gap-2 mt-2">
+        <span className="flex justify-between items-center">
+          <label
+            htmlFor="gst-checkbox"
+            className="w-max flex items-center gap-2 text-[0.85rem] text-neutral-500 cursor-pointer select-none"
+          >
+            <input
+              type="checkbox"
+              name="GST"
+              id="gst-checkbox"
+              className="rounded"
+              checked={isGstEnabled}
+              onChange={e => handleGstToggle(e.target.checked)}
+            />
+            <span>Include GST</span>
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            className={`remove-spinner-button rounded-md max-w-32 text-right text-[0.85rem] px-1 py-0.5 ${
+              isGstEnabled
+                ? 'bg-neutral-200 text-neutral-900'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+            }`}
+            placeholder="GST %"
+            value={gstValue}
+            disabled={!isGstEnabled}
+            onChange={e => handleGstValueChange(e.target.value)}
+          />
+        </span>
+
+        <span className="flex justify-between items-center">
+          <label
+            htmlFor="discount-checkbox"
+            className="w-max flex items-center gap-2 text-[0.85rem] text-neutral-500 cursor-pointer select-none"
+          >
+            <input
+              type="checkbox"
+              name="Discount"
+              id="discount-checkbox"
+              className="rounded"
+              checked={isDiscountEnabled}
+              onChange={e => handleDiscountToggle(e.target.checked)}
+            />
+            <span>Include Discount</span>
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            className={`remove-spinner-button rounded-md max-w-32 text-right text-[0.85rem] px-1 py-0.5 ${
+              isDiscountEnabled
+                ? 'bg-neutral-200 text-neutral-900'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+            }`}
+            placeholder="Discount %"
+            value={discountValue}
+            disabled={!isDiscountEnabled}
+            onChange={e => handleDiscountValueChange(e.target.value)}
+          />
+        </span>
       </div>
     </div>
   );
