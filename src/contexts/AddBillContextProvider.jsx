@@ -13,13 +13,28 @@ import {
   saveDiscountData,
 } from '@/utils/BillStorage';
 
-const calculateTotalAmount = items =>
-  items.reduce(
-    (sum, item) =>
-      sum +
-      item.price * (typeof item.quantity === 'number' ? item.quantity : 1),
-    0
-  );
+// Helper function to calculate individual item's final price
+const calculateItemFinalPrice = (
+  basePrice,
+  gstEnabled,
+  gstPercentage,
+  discountEnabled,
+  discountPercentage
+) => {
+  let finalPrice = basePrice;
+
+  // Apply GST
+  if (gstEnabled) {
+    finalPrice = finalPrice + finalPrice * (gstPercentage / 100);
+  }
+
+  // Apply discount
+  if (discountEnabled) {
+    finalPrice = finalPrice - finalPrice * (discountPercentage / 100);
+  }
+
+  return finalPrice;
+};
 
 export default function AddBillContextProvider({ children }) {
   const [billTitle, setBillTitle] = useState(getBillTitle);
@@ -49,8 +64,47 @@ export default function AddBillContextProvider({ children }) {
   });
 
   const itemNameInputRef = useRef(null);
+
+  // Function to recalculate all item prices with current GST/discount
+  const recalculateAllItemPrices = (
+    gstEnabled,
+    gstPercentage,
+    discountEnabled,
+    discountPercentage
+  ) => {
+    setItems(prevItems => {
+      const updatedItems = prevItems.map(item => ({
+        ...item,
+        price: calculateItemFinalPrice(
+          item.basePrice || item.price, // Use basePrice if available, otherwise use current price
+          gstEnabled,
+          gstPercentage,
+          discountEnabled,
+          discountPercentage
+        ),
+      }));
+
+      // Calculate total using final prices
+      const actualTotal = updatedItems.reduce((sum, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return sum + item.price * quantity;
+      }, 0);
+
+      saveBillData({
+        ...getBillData(),
+        items: updatedItems,
+        totalAmount: actualTotal,
+      });
+
+      return updatedItems;
+    });
+  };
+
   const timestamp = getTimestamp();
-  const totalAmount = calculateTotalAmount(items);
+  const totalAmount = items.reduce((sum, item) => {
+    const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+    return sum + item.price * quantity;
+  }, 0);
 
   const addItem = () => {
     if (!newItem.name || !newItem.price) return;
@@ -58,15 +112,28 @@ export default function AddBillContextProvider({ children }) {
     const itemToAdd = {
       name: newItem.name,
       quantity: newItem.quantity || 1, // Default to 1 only when adding
-      price: Number(newItem.price),
+      basePrice: Number(newItem.price), // Store original price
+      price: calculateItemFinalPrice(
+        Number(newItem.price),
+        isGstEnabled,
+        Number(gstValue) || 0,
+        isDiscountEnabled,
+        Number(discountValue) || 0
+      ), // Store final price with GST/discount
     };
 
     setItems(prevItems => {
       const updatedItems = [...prevItems, itemToAdd];
+      // Calculate total using final prices
+      const actualTotal = updatedItems.reduce((sum, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return sum + item.price * quantity;
+      }, 0);
+
       saveBillData({
         ...getBillData(),
         items: updatedItems,
-        totalAmount: calculateTotalAmount(updatedItems),
+        totalAmount: actualTotal,
       });
       return updatedItems;
     });
@@ -109,13 +176,34 @@ export default function AddBillContextProvider({ children }) {
     setItems(prevItems => {
       const updatedItems = prevItems.map((item, i) => {
         if (i !== index) return item;
-        return { ...item, [field]: value };
+
+        let updatedItem = { ...item, [field]: value };
+
+        // If price is being updated, store as basePrice and calculate final price
+        if (field === 'price') {
+          updatedItem.basePrice = Number(value);
+          updatedItem.price = calculateItemFinalPrice(
+            Number(value),
+            isGstEnabled,
+            Number(gstValue) || 0,
+            isDiscountEnabled,
+            Number(discountValue) || 0
+          );
+        }
+
+        return updatedItem;
       });
+
+      // Calculate total using final prices
+      const actualTotal = updatedItems.reduce((sum, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return sum + item.price * quantity;
+      }, 0);
 
       saveBillData({
         ...getBillData(),
         items: updatedItems,
-        totalAmount: calculateTotalAmount(updatedItems),
+        totalAmount: actualTotal,
       });
       return updatedItems;
     });
@@ -126,8 +214,22 @@ export default function AddBillContextProvider({ children }) {
     if (!enabled) {
       setGstValue('');
       saveGstData(false, 0);
+      // Recalculate all item prices without GST
+      recalculateAllItemPrices(
+        false,
+        0,
+        isDiscountEnabled,
+        Number(discountValue) || 0
+      );
     } else {
       saveGstData(true, Number(gstValue) || 0);
+      // Recalculate all item prices with GST
+      recalculateAllItemPrices(
+        true,
+        Number(gstValue) || 0,
+        isDiscountEnabled,
+        Number(discountValue) || 0
+      );
     }
   };
 
@@ -136,8 +238,17 @@ export default function AddBillContextProvider({ children }) {
     if (!enabled) {
       setDiscountValue('');
       saveDiscountData(false, 0);
+      // Recalculate all item prices without discount
+      recalculateAllItemPrices(isGstEnabled, Number(gstValue) || 0, false, 0);
     } else {
       saveDiscountData(true, Number(discountValue) || 0);
+      // Recalculate all item prices with discount
+      recalculateAllItemPrices(
+        isGstEnabled,
+        Number(gstValue) || 0,
+        true,
+        Number(discountValue) || 0
+      );
     }
   };
 
@@ -145,6 +256,13 @@ export default function AddBillContextProvider({ children }) {
     setGstValue(value);
     if (isGstEnabled) {
       saveGstData(true, Number(value) || 0);
+      // Recalculate all item prices with new GST value
+      recalculateAllItemPrices(
+        isGstEnabled,
+        Number(value) || 0,
+        isDiscountEnabled,
+        Number(discountValue) || 0
+      );
     }
   };
 
@@ -152,6 +270,13 @@ export default function AddBillContextProvider({ children }) {
     setDiscountValue(value);
     if (isDiscountEnabled) {
       saveDiscountData(true, Number(value) || 0);
+      // Recalculate all item prices with new discount value
+      recalculateAllItemPrices(
+        isGstEnabled,
+        Number(gstValue) || 0,
+        isDiscountEnabled,
+        Number(value) || 0
+      );
     }
   };
 
