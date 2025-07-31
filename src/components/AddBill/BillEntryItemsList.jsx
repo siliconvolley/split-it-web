@@ -125,8 +125,9 @@ export default function BillEntryItemsList() {
           }}
         />
       </div>
+      <div className="dashed my-2" />
 
-      <div className="grid gap-2 mt-2">
+      <div className="grid gap-1">
         <span className="flex justify-between items-center">
           <label
             htmlFor="gst-checkbox"
@@ -140,14 +141,14 @@ export default function BillEntryItemsList() {
               checked={isGstEnabled}
               onChange={e => handleGstToggle(e.target.checked)}
             />
-            <span>Include GST</span>
+            <span className="mr-2">Include GST</span>
           </label>
           <input
             type="number"
             min="0"
             max="100"
             step="0.01"
-            className={`remove-spinner-button rounded-md max-w-32 text-right text-[0.85rem] px-1 py-0.5 ${
+            className={`remove-spinner-button rounded-md text-right text-[0.85rem] px-1 py-0.5 ${
               isGstEnabled
                 ? 'bg-neutral-200 text-neutral-900'
                 : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
@@ -172,14 +173,14 @@ export default function BillEntryItemsList() {
               checked={isDiscountEnabled}
               onChange={e => handleDiscountToggle(e.target.checked)}
             />
-            <span>Include Discount</span>
+            <span className="mr-2">Include Discount</span>
           </label>
           <input
             type="number"
             min="0"
             max="100"
             step="0.01"
-            className={`remove-spinner-button rounded-md max-w-32 text-right text-[0.85rem] px-1 py-0.5 ${
+            className={`remove-spinner-button rounded-md text-right text-[0.85rem] px-1 py-0.5 ${
               isDiscountEnabled
                 ? 'bg-neutral-200 text-neutral-900'
                 : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'

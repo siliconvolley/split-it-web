@@ -32,15 +32,21 @@ export default function AddBillContextProvider({ children }) {
 
   // GST and Discount state
   const [isGstEnabled, setIsGstEnabled] = useState(() => getGstData().enabled);
-  const [gstValue, setGstValue] = useState(() =>
-    getGstData().percentage.toString()
-  );
+  const [gstValue, setGstValue] = useState(() => {
+    const gstData = getGstData();
+    return gstData.enabled && gstData.percentage > 0
+      ? gstData.percentage.toString()
+      : '';
+  });
   const [isDiscountEnabled, setIsDiscountEnabled] = useState(
     () => getDiscountData().enabled
   );
-  const [discountValue, setDiscountValue] = useState(() =>
-    getDiscountData().percentage.toString()
-  );
+  const [discountValue, setDiscountValue] = useState(() => {
+    const discountData = getDiscountData();
+    return discountData.enabled && discountData.percentage > 0
+      ? discountData.percentage.toString()
+      : '';
+  });
 
   const itemNameInputRef = useRef(null);
   const timestamp = getTimestamp();
