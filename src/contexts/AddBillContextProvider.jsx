@@ -7,6 +7,10 @@ import {
   getBillData,
   saveBillData,
   initializeBillData,
+  getGstData,
+  saveGstData,
+  getDiscountData,
+  saveDiscountData,
 } from '@/utils/BillStorage';
 
 const calculateTotalAmount = items =>
@@ -24,6 +28,24 @@ export default function AddBillContextProvider({ children }) {
     name: '',
     quantity: 1,
     price: 0,
+  });
+
+  // GST and Discount state
+  const [isGstEnabled, setIsGstEnabled] = useState(() => getGstData().enabled);
+  const [gstValue, setGstValue] = useState(() => {
+    const gstData = getGstData();
+    return gstData.enabled && gstData.percentage > 0
+      ? gstData.percentage.toString()
+      : '';
+  });
+  const [isDiscountEnabled, setIsDiscountEnabled] = useState(
+    () => getDiscountData().enabled
+  );
+  const [discountValue, setDiscountValue] = useState(() => {
+    const discountData = getDiscountData();
+    return discountData.enabled && discountData.percentage > 0
+      ? discountData.percentage.toString()
+      : '';
   });
 
   const itemNameInputRef = useRef(null);
@@ -66,6 +88,10 @@ export default function AddBillContextProvider({ children }) {
     setBillTitle('');
     setItems([]);
     setNewItem({ name: '', quantity: 1, price: 0 });
+    setIsGstEnabled(false);
+    setGstValue('');
+    setIsDiscountEnabled(false);
+    setDiscountValue('');
   };
 
   const handleItemNameInputFocus = () => {
@@ -95,6 +121,40 @@ export default function AddBillContextProvider({ children }) {
     });
   };
 
+  const handleGstToggle = enabled => {
+    setIsGstEnabled(enabled);
+    if (!enabled) {
+      setGstValue('');
+      saveGstData(false, 0);
+    } else {
+      saveGstData(true, Number(gstValue) || 0);
+    }
+  };
+
+  const handleDiscountToggle = enabled => {
+    setIsDiscountEnabled(enabled);
+    if (!enabled) {
+      setDiscountValue('');
+      saveDiscountData(false, 0);
+    } else {
+      saveDiscountData(true, Number(discountValue) || 0);
+    }
+  };
+
+  const handleGstValueChange = value => {
+    setGstValue(value);
+    if (isGstEnabled) {
+      saveGstData(true, Number(value) || 0);
+    }
+  };
+
+  const handleDiscountValueChange = value => {
+    setDiscountValue(value);
+    if (isDiscountEnabled) {
+      saveDiscountData(true, Number(value) || 0);
+    }
+  };
+
   const value = {
     // State
     billTitle,
@@ -103,6 +163,12 @@ export default function AddBillContextProvider({ children }) {
     setItems,
     newItem,
     setNewItem,
+
+    // GST and Discount state
+    isGstEnabled,
+    gstValue,
+    isDiscountEnabled,
+    discountValue,
 
     // Computed values
     timestamp,
@@ -117,6 +183,10 @@ export default function AddBillContextProvider({ children }) {
     handleItemNameInputFocus,
     checkIfBillExists,
     handleItemUpdate,
+    handleGstToggle,
+    handleDiscountToggle,
+    handleGstValueChange,
+    handleDiscountValueChange,
   };
 
   return (
