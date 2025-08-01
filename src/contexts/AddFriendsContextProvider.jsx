@@ -147,6 +147,55 @@ export default function AddFriendsContextProvider({ children }) {
     updateCurrentItemShares(newShares);
   };
 
+  const addAllFriendsToSelectedItem = () => {
+    if (!selectedItemData) return;
+
+    const availableFriends = getAvailableFriendsToAdd();
+    if (availableFriends.length === 0) return;
+
+    const itemIndex = findItemIndex(selectedItemData);
+    if (itemIndex === -1) return;
+
+    availableFriends.forEach(friend => {
+      addFriendToItem(friend.name, itemIndex);
+    });
+
+    const newFriendsToAdd = availableFriends.map(friend => ({
+      name: friend.name,
+      share: 0,
+    }));
+
+    const allFriends = [...selectedItemFriends, ...newFriendsToAdd];
+
+    // Calculate shares based on mode
+    let updatedFriends;
+    if (isCustomShares) {
+      // In custom mode, new friends get 0 share, existing friends keep their shares
+      updatedFriends = allFriends.map(f => ({
+        ...f,
+        share:
+          selectedItemFriends.find(existing => existing.name === f.name)
+            ?.share || 0,
+      }));
+    } else {
+      // In equal mode, recalculate equal shares for all friends
+      const equalShare = selectedItemData.quantity / allFriends.length;
+      updatedFriends = allFriends.map(f => ({
+        ...f,
+        share: equalShare,
+      }));
+    }
+
+    setSelectedItemFriends(updatedFriends);
+
+    // Update shares in storage
+    const newShares = {};
+    updatedFriends.forEach(f => {
+      newShares[f.name] = f.share;
+    });
+    updateCurrentItemShares(newShares);
+  };
+
   const removeFriendFromSelectedItem = friendName => {
     if (!selectedItemData || !isValidFriendName(friendName)) return;
 
@@ -396,6 +445,7 @@ export default function AddFriendsContextProvider({ children }) {
     updateCurrentItemShares,
     selectedItemFriends,
     addFriendToSelectedItem,
+    addAllFriendsToSelectedItem,
     removeFriendFromSelectedItem,
     updateFriendShareInSelectedItem,
     getRemainingQuantity,
