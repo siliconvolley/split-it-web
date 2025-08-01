@@ -12,6 +12,7 @@ export default function AddSharesPopover() {
     handleToggleCustomShares,
     selectedItemFriends,
     addFriendToSelectedItem,
+    addAllFriendsToSelectedItem,
     removeFriendFromSelectedItem,
     updateFriendShareInSelectedItem,
     getRemainingQuantity,
@@ -98,9 +99,13 @@ export default function AddSharesPopover() {
               >
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 bg-neutral-800 rounded-full grid place-items-center text-white text-xs font-medium">
-                    {friend.name[0]}
+                    {friend.name && friend.name[0]
+                      ? friend.name[0].toUpperCase()
+                      : '?'}
                   </div>
-                  <span className="text-sm font-medium">{friend.name}</span>
+                  <span className="text-sm font-medium">
+                    {friend.name || 'Unknown'}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {isCustomShares ? (
@@ -139,7 +144,10 @@ export default function AddSharesPopover() {
             <div className="mt-3">
               <select
                 onChange={e => {
-                  if (e.target.value) {
+                  if (e.target.value === 'ALL') {
+                    addAllFriendsToSelectedItem();
+                    e.target.value = '';
+                  } else if (e.target.value) {
                     addFriendToSelectedItem(e.target.value);
                     e.target.value = '';
                   }
@@ -148,6 +156,11 @@ export default function AddSharesPopover() {
                 defaultValue=""
               >
                 <option value="">Add a friend...</option>
+                {getAvailableFriendsToAdd().length > 1 && (
+                  <option value="ALL" className="font-medium">
+                    Add all friends ({getAvailableFriendsToAdd().length})
+                  </option>
+                )}
                 {getAvailableFriendsToAdd().map(friend => (
                   <option key={friend.name} value={friend.name}>
                     {friend.name}
