@@ -9,6 +9,7 @@ export default function SharesList() {
     addSharesPopover,
     setAddSharesPopover,
     getSelectedItemData,
+    getItemFriends,
   } = useAddFriends();
 
   return (
@@ -32,21 +33,42 @@ export default function SharesList() {
               <span className="font-bold">₹ {item.price}</span>
             </p>
             <div className="dashed my-2" />
-            <Button
-              type="primary"
-              title="Add friend to the item"
-              className="w-max grid grid-flow-col items-center gap-2 px-[0.75rem] py-[0.5rem] mt-3"
-              onClick={e => {
-                e.preventDefault();
-                getSelectedItemData(index);
-                setAddSharesPopover(prev => !prev);
-              }}
-            >
-              {item.hasCustomShares ? <PieChart /> : <Equal />}
-              <span className="font-medium">
-                {item.hasCustomShares ? 'Custom' : 'Equal'}
-              </span>
-            </Button>
+            <div className="flex justify-between items-center mt-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {getItemFriends(index).length === 0 ? (
+                  <div className="w-9 h-9 bg-neutral-400 rounded-full grid place-items-center text-white text-sm font-semibold">
+                    ?
+                  </div>
+                ) : (
+                  getItemFriends(index).map((friendName, friendIndex) => (
+                    <div
+                      key={friendIndex}
+                      className="w-9 h-9 bg-neutral-800 rounded-full grid place-items-center text-white text-xs font-semibold"
+                      title={friendName || 'Unknown'}
+                    >
+                      {friendName && friendName[0]
+                        ? friendName[0].toUpperCase()
+                        : '?'}
+                    </div>
+                  ))
+                )}
+              </div>
+              <Button
+                type="primary"
+                title="Add friend to the item"
+                className="w-max grid grid-flow-col items-center place-self-start gap-2 px-[0.75rem] py-[0.5rem]"
+                onClick={e => {
+                  e.preventDefault();
+                  getSelectedItemData(index);
+                  setAddSharesPopover(prev => !prev);
+                }}
+              >
+                {item.hasCustomShares ? <PieChart /> : <Equal />}
+                <span className="font-medium">
+                  {item.hasCustomShares ? 'Custom' : 'Equal'}
+                </span>
+              </Button>
+            </div>
           </li>
         ))}
       </ul>

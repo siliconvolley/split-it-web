@@ -401,6 +401,7 @@ export default function AddFriendsContextProvider({ children }) {
     getRemainingQuantity,
     getAvailableFriendsToAdd,
     saveSelectedItemShares,
+    getItemFriends,
   };
 
   return (
