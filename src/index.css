@@ -58,7 +58,8 @@ input[type="radio"]:focus {
 }
 
 .flexible-container {
-  width: min(36rem, 90vw);
+  width: min(36rem, 100%);
+  margin-inline: auto; 
 }
 
 .dashed {
