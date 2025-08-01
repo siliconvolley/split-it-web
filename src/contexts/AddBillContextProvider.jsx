@@ -280,6 +280,26 @@ export default function AddBillContextProvider({ children }) {
     }
   };
 
+  const handleDeleteItem = index => {
+    setItems(prevItems => {
+      const updatedItems = prevItems.filter((_, i) => i !== index);
+
+      // Calculate total using final prices
+      const actualTotal = updatedItems.reduce((sum, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return sum + item.price * quantity;
+      }, 0);
+
+      saveBillData({
+        ...getBillData(),
+        items: updatedItems,
+        totalAmount: actualTotal,
+      });
+
+      return updatedItems;
+    });
+  };
+
   const value = {
     // State
     billTitle,
@@ -308,6 +328,7 @@ export default function AddBillContextProvider({ children }) {
     handleItemNameInputFocus,
     checkIfBillExists,
     handleItemUpdate,
+    handleDeleteItem,
     handleGstToggle,
     handleDiscountToggle,
     handleGstValueChange,

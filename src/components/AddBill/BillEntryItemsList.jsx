@@ -1,4 +1,5 @@
 import { useAddBill } from '@/hooks/useAddBill';
+import { X } from 'lucide-react';
 
 export default function BillEntryItemsList() {
   const {
@@ -9,6 +10,7 @@ export default function BillEntryItemsList() {
     addItem,
     handleItemNameInputFocus,
     handleItemUpdate,
+    handleDeleteItem,
     isGstEnabled,
     gstValue,
     isDiscountEnabled,
@@ -19,24 +21,27 @@ export default function BillEntryItemsList() {
     handleDiscountValueChange,
   } = useAddBill();
 
+  const gridColumnsTemplateValue = '7% 48% 20% 18% 7%';
+
   return (
     <div className="grid my-2">
       <div
-        className="bg-inherit grid grid-flow-col grid-cols-4 items-center gap-0 font-semibold text-xs text-neutral-500"
-        style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
+        className="bg-inherit grid grid-flow-col items-center gap-0 font-semibold text-xs text-neutral-500"
+        style={{ gridTemplateColumns: gridColumnsTemplateValue }}
       >
         <h3 className="text-start">No.</h3>
         <h3 className="pl-2">Item Name</h3>
         <h3 className="text-end pr-2">Quantity</h3>
         <h3 className="text-end pr-2">Price</h3>
+        <span aria-label="Actions"/>
       </div>
 
       {/* Existing Items */}
       {items.map((item, index) => (
         <div
           key={index}
-          className="bg-inherit grid grid-flow-col grid-cols-4 items-center gap-0"
-          style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
+          className="bg-inherit grid grid-flow-col items-center gap-0 text-[0.9rem]"
+          style={{ gridTemplateColumns: gridColumnsTemplateValue }}
         >
           <span className="items-center">{index + 1}.</span>
 
@@ -76,13 +81,22 @@ export default function BillEntryItemsList() {
               handleItemUpdate(index, 'price', Number(e.target.value))
             }
           />
+
+          <button
+            onClick={() => handleDeleteItem(index)}
+            className="flex items-center justify-center justify-self-end w-5 h-5 sm:w-7 sm:h-7 text-red-600 bg-red-100 hover:bg-red-200 rounded border border-transparent transition-colors focus:outline-none"
+            title="Delete this item"
+            aria-label={`Delete ${item.name || 'item'}`}
+          >
+            <X size={16} strokeWidth={1.5} />
+          </button>
         </div>
       ))}
 
       {/* New Item Entry */}
       <div
-        className="grid grid-cols-4 items-center"
-        style={{ gridTemplateColumns: '10% 50% 20% 20%' }}
+        className="grid items-center text-[0.9rem]"
+        style={{ gridTemplateColumns: gridColumnsTemplateValue }}
       >
         <span>{items.length + 1}.</span>
         <input
@@ -124,6 +138,7 @@ export default function BillEntryItemsList() {
             }
           }}
         />
+        <span aria-hidden="true" />
       </div>
       <div className="dashed my-2" />
 
